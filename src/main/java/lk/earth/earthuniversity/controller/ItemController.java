@@ -1,0 +1,126 @@
+package lk.earth.earthuniversity.controller;
+
+import lk.earth.earthuniversity.dao.ItemDao;
+import lk.earth.earthuniversity.entity.Item;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@CrossOrigin
+@RestController
+@RequestMapping(value = "/items")
+public class ItemController {
+
+    @Autowired
+    private ItemDao itemdao;
+
+    @GetMapping(produces = "application/json")
+//    @PreAuthorize("hasAuthority('employee-select')")p
+    public List<Item> get(@RequestParam HashMap<String, String> params) {
+
+        List<Item> items = this.itemdao.findAll();
+
+        if(params.isEmpty())  return items;
+
+        String itemname = params.get("itemname");
+        String itemstatusid= params.get("itemstatusid");
+        String categoryid= params.get("categoryid");
+       
+        Stream<Item> istream = items.stream();
+
+        if(itemname!=null)istream = istream.filter(i->i.getName().contains(itemname));
+        if(itemstatusid!=null)istream = istream.filter(i->i.getItemstatus().getId()==Integer.parseInt(itemstatusid));
+        if(categoryid!=null)istream = istream.filter(i->i.getSubcategory().getCategory().getId()==Integer.parseInt(categoryid));
+
+        return istream.collect(Collectors.toList());
+
+    }
+
+
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+//    @PreAuthorize("hasAuthority('Employee-Insert')")
+    public HashMap<String,String> add(@RequestBody Item item){
+
+        HashMap<String,String> responce = new HashMap<>();
+        String errors="";
+
+        if(itemdao.findByItemCode(item.getCode())!=null)
+            errors = errors+"<br> Existing Code";
+        if(itemdao.findByItemName(item.getName())!=null)
+            errors = errors+"<br> Existing Name";
+
+        if(errors.isEmpty())
+        itemdao.save(item);
+        else errors = "Server Validation Errors : <br> "+errors;
+
+        responce.put("id",String.valueOf(item.getId()));
+        responce.put("url","/items/"+item.getId());
+        responce.put("errors",errors);
+
+        return responce;
+    }
+
+//
+//    @PutMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+////    @PreAuthorize("hasAuthority('Employee-Update')")
+//    public HashMap<String,String> update(@RequestBody Employee employee){
+//
+//        HashMap<String,String> responce = new HashMap<>();
+//        String errors="";
+//
+//        Employee emp1 = employeedao.findByNumber(employee.getNumber());
+//        Employee emp2 = employeedao.findByNic(employee.getNic());
+//
+//        if(emp1!=null && employee.getId()!=emp1.getId())
+//            errors = errors+"<br> Existing Number";
+//        if(emp2!=null && employee.getId()!=emp2.getId())
+//            errors = errors+"<br> Existing NIC";
+//
+//        if(errors=="") employeedao.save(employee);
+//        else errors = "Server Validation Errors : <br> "+errors;
+//
+//        responce.put("id",String.valueOf(employee.getId()));
+//        responce.put("url","/employees/"+employee.getId());
+//        responce.put("errors",errors);
+//
+//        return responce;
+//    }
+
+//
+//    @DeleteMapping("/{id}")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public HashMap<String,String> delete(@PathVariable Integer id){
+//
+//        System.out.println(id);
+//
+//        HashMap<String,String> responce = new HashMap<>();
+//        String errors="";
+//
+//        Employee emp1 = employeedao.findByMyId(id);
+//
+//        if(emp1==null)
+//            errors = errors+"<br> Employee Does Not Existed";
+//
+//        if(errors=="") employeedao.delete(emp1);
+//        else errors = "Server Validation Errors : <br> "+errors;
+//
+//        responce.put("id",String.valueOf(id));
+//        responce.put("url","/employees/"+id);
+//        responce.put("errors",errors);
+//
+//        return responce;
+//    }
+
+}
+
+
+
+
