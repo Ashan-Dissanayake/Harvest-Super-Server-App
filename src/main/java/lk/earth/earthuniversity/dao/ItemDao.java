@@ -13,5 +13,8 @@ public interface ItemDao extends JpaRepository<Item,Integer> {
     @Query("select i from Item i where i.name=:name")
     Item findByItemName(@Param("name")String name);
 
+    @Query("select i from Item i where i.id=:id")
+    Item findByMyId(@Param("id")Integer id);
+
 }
 

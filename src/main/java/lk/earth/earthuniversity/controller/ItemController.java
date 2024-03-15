@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,7 +21,7 @@ public class ItemController {
     private ItemDao itemdao;
 
     @GetMapping(produces = "application/json")
-//    @PreAuthorize("hasAuthority('employee-select')")p
+//  @PreAuthorize("hasAuthority('item-select')")p
     public List<Item> get(@RequestParam HashMap<String, String> params) {
 
         List<Item> items = this.itemdao.findAll();
@@ -40,12 +41,11 @@ public class ItemController {
         return istream.collect(Collectors.toList());
 
     }
-
-
-
+    
+    
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Employee-Insert')")
+//  @PreAuthorize("hasAuthority('Item-Insert')")
     public HashMap<String,String> add(@RequestBody Item item){
 
         HashMap<String,String> responce = new HashMap<>();
@@ -67,57 +67,55 @@ public class ItemController {
         return responce;
     }
 
-//
-//    @PutMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-////    @PreAuthorize("hasAuthority('Employee-Update')")
-//    public HashMap<String,String> update(@RequestBody Employee employee){
-//
-//        HashMap<String,String> responce = new HashMap<>();
-//        String errors="";
-//
-//        Employee emp1 = employeedao.findByNumber(employee.getNumber());
-//        Employee emp2 = employeedao.findByNic(employee.getNic());
-//
-//        if(emp1!=null && employee.getId()!=emp1.getId())
-//            errors = errors+"<br> Existing Number";
-//        if(emp2!=null && employee.getId()!=emp2.getId())
-//            errors = errors+"<br> Existing NIC";
-//
-//        if(errors=="") employeedao.save(employee);
-//        else errors = "Server Validation Errors : <br> "+errors;
-//
-//        responce.put("id",String.valueOf(employee.getId()));
-//        responce.put("url","/employees/"+employee.getId());
-//        responce.put("errors",errors);
-//
-//        return responce;
-//    }
 
-//
-//    @DeleteMapping("/{id}")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public HashMap<String,String> delete(@PathVariable Integer id){
-//
-//        System.out.println(id);
-//
-//        HashMap<String,String> responce = new HashMap<>();
-//        String errors="";
-//
-//        Employee emp1 = employeedao.findByMyId(id);
-//
-//        if(emp1==null)
-//            errors = errors+"<br> Employee Does Not Existed";
-//
-//        if(errors=="") employeedao.delete(emp1);
-//        else errors = "Server Validation Errors : <br> "+errors;
-//
-//        responce.put("id",String.valueOf(id));
-//        responce.put("url","/employees/"+id);
-//        responce.put("errors",errors);
-//
-//        return responce;
-//    }
+    @PutMapping
+    @ResponseStatus(HttpStatus.CREATED)
+//  @PreAuthorize("hasAuthority('Item-Update')")
+    public HashMap<String,String> update(@RequestBody Item item){
+
+        HashMap<String,String> responce = new HashMap<>();
+        String errors="";
+
+        Item itm1 = itemdao.findByItemCode(item.getCode());
+        Item itm2 = itemdao.findByItemName(item.getName());
+
+        if(itm1!=null && !Objects.equals(item.getId(), itm1.getId()))
+            errors = errors+"<br> Existing Code";
+        if(itm2!=null && !Objects.equals(item.getId(), itm2.getId()))
+            errors = errors+"<br> Existing Name";
+
+        if(errors.isEmpty()) itemdao.save(item);
+        else errors = "Server Validation Errors : <br> "+errors;
+
+        responce.put("id",String.valueOf(item.getId()));
+        responce.put("url","/items/"+item.getId());
+        responce.put("errors",errors);
+
+        return responce;
+    }
+
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public HashMap<String,String> delete(@PathVariable Integer id){
+
+        HashMap<String,String> responce = new HashMap<>();
+        String errors="";
+
+        Item itm = itemdao.findByMyId(id);
+
+        if(itm==null)
+            errors = errors+"<br> Item Does Not Existed";
+
+        if(errors.isEmpty()) itemdao.delete(itm);
+        else errors = "Server Validation Errors : <br> "+errors;
+
+        responce.put("id",String.valueOf(id));
+        responce.put("url","/items/"+id);
+        responce.put("errors",errors);
+
+        return responce;
+    }
 
 }
 
