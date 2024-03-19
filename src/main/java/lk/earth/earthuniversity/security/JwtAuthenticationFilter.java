@@ -38,14 +38,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             User user = userService.getByUsername(loginRequest.getUsername());
 
-                String salt = user.getSalt();
-                String hashedPassword = "";
+            String salt = user.getSalt();
+            String hashedPassword = "";
 
-                if (salt != null){
-                     hashedPassword = salt + loginRequest.getPassword();
-                }else {
-                     hashedPassword =  loginRequest.getPassword();
-                }
+            if (salt != null){
+                hashedPassword = salt + loginRequest.getPassword();
+            }else {
+                hashedPassword =  loginRequest.getPassword();
+            }
 
             Authentication auth = authenticationManager.authenticate( new UsernamePasswordAuthenticationToken( loginRequest.getUsername(), hashedPassword ) );
 
