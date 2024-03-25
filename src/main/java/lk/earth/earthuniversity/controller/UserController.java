@@ -54,8 +54,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public Object get(@PathVariable String username) {
 
-        System.out.println(username);
-
         HashMap<String, String> response = new HashMap<>();
         String errors = "";
 
