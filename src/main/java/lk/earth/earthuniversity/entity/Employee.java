@@ -21,7 +21,7 @@ public class Employee {
     private String number;
     @Basic
     @Column(name = "fullname")
-    @Pattern(regexp = "^([A-Z][a-z]*[.]?[\\s]?)*([A-Z][a-z]*)$", message = "Invalid Fullname")
+    @Pattern(regexp = "^([A-Z][a-z]*[.]?[\\s]?)*([A-Z][a-z]*)$", message = "Invalid Full Name")
     private String fullname;
     @Basic
     @Column(name = "callingname")
@@ -48,11 +48,11 @@ public class Employee {
     private String mobile;
     @Basic
     @Column(name = "land")
-    @Pattern(regexp = "^\\d{0,10}$", message = "Invalid Landphone Number")
+    @Pattern(regexp = "^\\d{0,10}$", message = "Invalid Land phone Number")
     private String land;
     @Basic
     @Column(name = "email")
-    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Invalid Landphone Number")
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Invalid Email Address")
     private String email;
     @Basic
     @Column(name = "doassignment")

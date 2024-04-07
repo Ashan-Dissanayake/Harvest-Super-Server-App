@@ -50,6 +50,29 @@ public class UserController {
         return ustream.collect(Collectors.toList());
     }
 
+    @GetMapping("/empbyuser/{username}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Object get(@PathVariable String username) {
+
+        HashMap<String, String> response = new HashMap<>();
+        String errors = "";
+
+        User user = userdao.findByUsername(username);
+
+        if (user == null)
+            errors = errors + "<br> User Does Not Exist";
+
+        if (errors.isEmpty()) {
+            return user.getEmployee(); // Return the Employee object
+        } else {
+            errors = "Server Validation Errors : <br> " + errors;
+            response.put("username", username);
+            response.put("url", "/users/" + username);
+            response.put("errors", errors);
+            return response; // Return the error response
+        }
+    }
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
