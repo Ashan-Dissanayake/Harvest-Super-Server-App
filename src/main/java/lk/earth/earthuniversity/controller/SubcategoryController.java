@@ -3,11 +3,9 @@ package lk.earth.earthuniversity.controller;
 import lk.earth.earthuniversity.dao.SubcategoryDao;
 import lk.earth.earthuniversity.entity.Subcategory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +33,26 @@ public class SubcategoryController {
         return subcategories;
 
     }
+
+    @GetMapping(path ="/list/brand", produces = "application/json")
+    public List<Subcategory> getByBrnad(@RequestParam HashMap<String, String> params) {
+
+        String brand = params.get("brand");
+
+        List<Subcategory> subcategories = this.subcategorydao.findSubcategoriesByBrand(brand);
+
+        subcategories = subcategories.stream().map(
+                subcategory -> { Subcategory s = new Subcategory();
+                    s.setId(subcategory.getId());
+                    s.setName(subcategory.getName());
+                    return s; }
+        ).collect(Collectors.toList());
+
+        return subcategories;
+
+    }
+
+
 
 }
 
