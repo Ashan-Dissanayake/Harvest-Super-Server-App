@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CrossOrigin
 @RestController
@@ -17,23 +18,22 @@ public class SubcategoryController {
     @Autowired
     private SubcategoryDao subcategorydao;
 
-    @GetMapping(path ="/list", produces = "application/json")
-    public List<Subcategory> get() {
+    @GetMapping(path = "/list", produces = "application/json")
+    public List<Subcategory> get(@RequestParam HashMap<String, String> params) {
 
         List<Subcategory> subcategories = this.subcategorydao.findAll();
 
-        subcategories = subcategories.stream().map(
-                subcategory -> { Subcategory s = new Subcategory();
-                    s.setId(subcategory.getId());
-                    s.setName(subcategory.getName());
-                    s.setCategory(subcategory.getCategory());
-                    return s; }
-        ).collect(Collectors.toList());
+        if (params.isEmpty())  return  subcategories;
 
-        return subcategories;
+        String categoryid = params.get("categoryid");
+
+        Stream<Subcategory> sstream = subcategories.stream();
+
+        if(categoryid!=null) sstream = sstream.filter((s -> s.getCategory().getId()==Integer.parseInt(categoryid)));
+
+        return sstream.collect(Collectors.toList());
 
     }
-
 }
 
 

@@ -75,8 +75,6 @@ public class EmployeeController {
         if(employeedao.findByNic(employee.getNic())!=null)
             errors = errors+"<br> Existing NIC";
 
-        System.out.println(employee.getDoassignment());
-
         if(errors=="")
         employeedao.save(employee);
         else errors = "Server Validation Errors : <br> "+errors;
