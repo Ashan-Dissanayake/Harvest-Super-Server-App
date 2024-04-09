@@ -34,26 +34,6 @@ public class SubcategoryController {
 
     }
 
-    @GetMapping(path ="/list/brand", produces = "application/json")
-    public List<Subcategory> getByBrnad(@RequestParam HashMap<String, String> params) {
-
-        String brand = params.get("brand");
-
-        List<Subcategory> subcategories = this.subcategorydao.findSubcategoriesByBrand(brand);
-
-        subcategories = subcategories.stream().map(
-                subcategory -> { Subcategory s = new Subcategory();
-                    s.setId(subcategory.getId());
-                    s.setName(subcategory.getName());
-                    return s; }
-        ).collect(Collectors.toList());
-
-        return subcategories;
-
-    }
-
-
-
 }
 
 
