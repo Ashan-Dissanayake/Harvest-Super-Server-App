@@ -17,7 +17,7 @@ public class Item {
 
     @Basic
     @Column(name = "name")
-    @Pattern(regexp = "^[A-Z][a-z]*[\\s][A-Z][a-z]*[\\s][\\d]{1,3}(kg|g|ml|l)$",message = "Invalid Item Name")
+    @Pattern(regexp = "^[A-Z][a-z]*\\s[A-Z][a-z]*\\s(?:[A-Z][a-z]*\\s)?\\d{1,3}(kg|g|ml|l)$",message = "Invalid Item Name")
     private String name;
 
     @Basic
