@@ -48,6 +48,8 @@ public class ItemController {
 //  @PreAuthorize("hasAuthority('Item-Insert')")
     public HashMap<String,String> add(@RequestBody Item item){
 
+        System.out.println(item.getUnittype().getId());
+
         HashMap<String,String> responce = new HashMap<>();
         String errors="";
 

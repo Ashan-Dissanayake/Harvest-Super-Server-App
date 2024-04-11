@@ -11,7 +11,6 @@ public class Brand {
     @Id
     @Column(name = "id")
     private Integer id;
-
     @Basic
     @Column(name = "name")
     private String name;
