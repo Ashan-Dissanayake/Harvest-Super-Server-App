@@ -17,7 +17,7 @@ public class Unittype {
     private String name;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "unittypeByUnittypeId")
+    @OneToMany(mappedBy = "unittype")
     private Collection<Item> items;
 
     public Integer getId() {

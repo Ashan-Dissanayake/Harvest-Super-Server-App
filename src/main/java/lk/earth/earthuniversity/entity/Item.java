@@ -64,7 +64,7 @@ public class Item {
 
     @ManyToOne
     @JoinColumn(name = "unittype_id", referencedColumnName = "id", nullable = false)
-    private Unittype unittypeByUnittypeId;
+    private Unittype unittype;
 
     @ManyToOne
     @JoinColumn(name = "itemstatus_id", referencedColumnName = "id", nullable = false)
@@ -192,12 +192,12 @@ public class Item {
         this.subcategory = subcategory;
     }
 
-    public Unittype getUnittypeByUnittypeId() {
-        return unittypeByUnittypeId;
+    public Unittype getUnittype() {
+        return unittype;
     }
 
-    public void setUnittypeByUnittypeId(Unittype unittypeByUnittypeId) {
-        this.unittypeByUnittypeId = unittypeByUnittypeId;
+    public void setUnittype(Unittype unittyped) {
+        this.unittype = unittype;
     }
 
     public Itemstatus getItemstatus() {
