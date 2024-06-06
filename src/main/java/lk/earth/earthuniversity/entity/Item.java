@@ -1,5 +1,6 @@
 package lk.earth.earthuniversity.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lk.earth.earthuniversity.util.RegexPattern;
 
 import javax.persistence.*;
@@ -27,12 +28,12 @@ public class Item {
 
     @Basic
     @Column(name = "sprice")
-    @Pattern(regexp = "^\\d+(\\.\\d{1,2})?$\n", message = "Invalid Sale Price")
+    @RegexPattern(reg = "^\\d+(\\.\\d{1,2})?$", msg = "Invalid Sale Price")
     private BigDecimal sprice;
 
     @Basic
     @Column(name = "pprice")
-    @Pattern(regexp = "^\\d+(\\.\\d{1,2})?$\n", message = "Invalid Purchase Price")
+    @RegexPattern(reg = "^\\d+(\\.\\d{1,2})?$", msg = "Invalid Purchase Price")
     private BigDecimal pprice;
 
     @Basic
@@ -41,12 +42,12 @@ public class Item {
 
     @Basic
     @Column(name = "quantity")
-    @Pattern(regexp = "^\\d{3}$", message = "Invalid Quantity")
+    @RegexPattern(reg = "^\\d{3}$", msg = "Invalid Quantity")
     private Integer quantity;
 
     @Basic
     @Column(name = "rop")
-    @Pattern(regexp = "^\\d{2}$", message = "Invalid ROP")
+    @RegexPattern(reg = "^\\d{2}$", msg = "Invalid ROP")
     private Integer rop;
 
     @Basic
@@ -196,7 +197,7 @@ public class Item {
         return unittype;
     }
 
-    public void setUnittype(Unittype unittyped) {
+    public void setUnittype(Unittype unittype) {
         this.unittype = unittype;
     }
 
