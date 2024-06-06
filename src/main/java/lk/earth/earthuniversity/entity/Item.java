@@ -1,5 +1,6 @@
 package lk.earth.earthuniversity.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lk.earth.earthuniversity.util.RegexPattern;
 
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Arrays;
+import java.util.Collection;
 
 @Entity
 public class Item {
@@ -69,6 +71,9 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "itemstatus_id", referencedColumnName = "id", nullable = false)
     private Itemstatus itemstatus;
+    @JsonIgnore
+    @OneToMany(mappedBy = "item")
+    private Collection<Supply> supplies;
 
     public Integer getId() {
         return id;
@@ -206,5 +211,13 @@ public class Item {
 
     public void setItemstatus(Itemstatus itemstatus) {
         this.itemstatus = itemstatus;
+    }
+
+    public Collection<Supply> getSupplies() {
+        return supplies;
+    }
+
+    public void setSupplies(Collection<Supply> supplies) {
+        this.supplies = supplies;
     }
 }
