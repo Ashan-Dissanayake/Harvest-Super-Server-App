@@ -1,6 +1,5 @@
 package lk.earth.earthuniversity.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -47,6 +46,7 @@ public class User {
 
     @OneToMany(mappedBy = "user",fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Userrole> userroles;
+
 
     public Integer getId() {
         return id;

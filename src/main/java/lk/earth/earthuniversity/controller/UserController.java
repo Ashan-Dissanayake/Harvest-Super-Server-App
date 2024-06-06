@@ -2,6 +2,7 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.UserDao;
+import lk.earth.earthuniversity.entity.Employee;
 import lk.earth.earthuniversity.entity.User;
 import lk.earth.earthuniversity.entity.Userrole;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +27,7 @@ public class UserController {
     @GetMapping(produces = "application/json")
     public List<User> get(@RequestParam HashMap<String, String> params) {
         List<User> users = this.userdao.findAll();
+        users.forEach(user -> user.setEmployee(new Employee(user.getEmployee().getId(), user.getEmployee().getCallingname())));
 
         if (params.isEmpty()) {
             return users;
