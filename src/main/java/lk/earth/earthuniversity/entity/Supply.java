@@ -79,11 +79,11 @@ public class Supply {
         this.supplier = supplier;
     }
 
-    public Item getItemB() {
+    public Item getItem() {
         return item;
     }
 
-    public void setItemB(Item itemB) {
-        this.item = itemB;
+    public void setItem(Item item) {
+        this.item = item;
     }
 }

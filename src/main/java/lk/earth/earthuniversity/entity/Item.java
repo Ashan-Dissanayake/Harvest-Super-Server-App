@@ -75,6 +75,13 @@ public class Item {
     @OneToMany(mappedBy = "item")
     private Collection<Supply> supplies;
 
+    public Item(){}
+
+    public Item(Integer id,String name){
+        this.id = id;
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }
