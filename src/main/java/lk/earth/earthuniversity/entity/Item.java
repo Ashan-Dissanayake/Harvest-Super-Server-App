@@ -71,9 +71,6 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "itemstatus_id", referencedColumnName = "id", nullable = false)
     private Itemstatus itemstatus;
-    @JsonIgnore
-    @OneToMany(mappedBy = "item")
-    private Collection<Supply> supplies;
 
     public Item(){}
 
@@ -220,11 +217,4 @@ public class Item {
         this.itemstatus = itemstatus;
     }
 
-    public Collection<Supply> getSupplies() {
-        return supplies;
-    }
-
-    public void setSupplies(Collection<Supply> supplies) {
-        this.supplies = supplies;
-    }
 }
