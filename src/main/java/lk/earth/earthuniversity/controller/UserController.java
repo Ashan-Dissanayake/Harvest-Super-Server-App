@@ -39,7 +39,7 @@ public class UserController {
 
         Stream<User> ustream = users.stream();
 
-        if (employee != null) {
+        if (employee != null){
             ustream = ustream.filter(u -> u.getEmployee().getCallingname().contains(employee));
         }
         if (username != null) {

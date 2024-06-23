@@ -8,6 +8,7 @@ import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Arrays;
+import java.util.Collection;
 
 @Entity
 public class Item {
@@ -70,6 +71,13 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "itemstatus_id", referencedColumnName = "id", nullable = false)
     private Itemstatus itemstatus;
+
+    public Item(){}
+
+    public Item(Integer id,String name){
+        this.id = id;
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;
@@ -208,4 +216,5 @@ public class Item {
     public void setItemstatus(Itemstatus itemstatus) {
         this.itemstatus = itemstatus;
     }
+
 }
