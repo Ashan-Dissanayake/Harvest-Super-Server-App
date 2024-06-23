@@ -26,20 +26,28 @@ public class UserController {
 
     @GetMapping(produces = "application/json")
     public List<User> get(@RequestParam HashMap<String, String> params) {
+        List<User> users = this.userdao.findAll();
+        users.forEach(user -> user.setEmployee(new Employee(user.getEmployee().getId(), user.getEmployee().getCallingname())));
 
-        Stream<User> ustream = this.userdao.findAll().stream();
-
-        ustream = ustream.peek((u)-> u.setEmployee(new Employee(u.getEmployee().getId(),u.getEmployee().getCallingname())));
-
-        if (params.isEmpty()) return ustream.collect(Collectors.toList());
+        if (params.isEmpty()) {
+            return users;
+        }
 
         String employee = params.get("employee");
         String username = params.get("username");
         String roleid = params.get("roleid");
 
-        if (employee != null) ustream = ustream.filter(u -> u.getEmployee().getCallingname().contains(employee));
-        if (username != null) ustream = ustream.filter(u -> u.getUsername().contains(username));
-        if (roleid != null) ustream = ustream.filter(u -> u.getUserroles().stream().anyMatch(ur -> ur.getRole().getId() == Integer.parseInt(roleid)));
+        Stream<User> ustream = users.stream();
+
+        if (employee != null){
+            ustream = ustream.filter(u -> u.getEmployee().getCallingname().contains(employee));
+        }
+        if (username != null) {
+            ustream = ustream.filter(u -> u.getUsername().contains(username));
+        }
+        if (roleid != null) {
+            ustream = ustream.filter(u -> u.getUserroles().stream().anyMatch(ur -> ur.getRole().getId() == Integer.parseInt(roleid)));
+        }
 
         return ustream.collect(Collectors.toList());
     }
@@ -78,7 +86,7 @@ public class UserController {
        if(userdao.findByUsername(user.getUsername())!=null)
            errors = errors+"<br> Existing Username";
 
-        if(errors.isEmpty()){
+        if(errors==""){
             for(Userrole u : user.getUserroles()) u.setUser(user);
 
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -131,12 +139,11 @@ public class UserController {
 
                 userdao.save(extUser); // Save the updated extUser object
 
-            } catch (Exception e) {
-               errors = e.getMessage();
-            } finally {
                 response.put("id", String.valueOf(user.getId()));
                 response.put("url", "/users/" + user.getId());
                 response.put("errors", errors);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -155,7 +162,7 @@ public class UserController {
         if(use1==null)
             errors = errors+"<br> User Does Not Existed";
 
-        if(errors.isEmpty()) userdao.delete(use1);
+        if(errors=="") userdao.delete(use1);
         else errors = "Server Validation Errors : <br> "+errors;
 
         responce.put("username",String.valueOf(username));
