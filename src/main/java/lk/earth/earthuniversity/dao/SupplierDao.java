@@ -1,13 +1,9 @@
 package lk.earth.earthuniversity.dao;
 
-import lk.earth.earthuniversity.entity.Employee;
 import lk.earth.earthuniversity.entity.Supplier;
-import lk.earth.earthuniversity.entity.Supplierstatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
