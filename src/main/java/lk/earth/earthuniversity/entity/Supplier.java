@@ -55,9 +55,14 @@ public class Supplier {
     @ManyToOne
     @JoinColumn(name = "supplierstatus_id", referencedColumnName = "id", nullable = false)
     private Supplierstatus supplierstatus;
-
     @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,orphanRemoval = true)
     private Collection<Supply> supplies;
+
+    public Supplier(){}
+    public Supplier(Integer id,String name){
+        this.id = id;
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;
