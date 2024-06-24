@@ -86,7 +86,7 @@ public class UserController {
        if(userdao.findByUsername(user.getUsername())!=null)
            errors = errors+"<br> Existing Username";
 
-        if(errors==""){
+        if(errors.isEmpty()){
             for(Userrole u : user.getUserroles()) u.setUser(user);
 
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
