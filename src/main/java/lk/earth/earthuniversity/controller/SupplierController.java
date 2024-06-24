@@ -42,6 +42,21 @@ public class SupplierController {
         return sstream.collect(Collectors.toList());
     }
 
+    @GetMapping(path = "/list", produces = "application/json")
+    public List<Supplier> get() {
+
+        List<Supplier> suppliers = this.supplierdao.findAllByIdAndName();
+
+        suppliers = suppliers.stream().map(
+                supplier -> {
+                    Supplier s = new Supplier(supplier.getId(), supplier.getName());
+                    return s;
+                }
+        ).collect(Collectors.toList());
+
+        return suppliers;
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public HashMap<String, String> add(@RequestBody Supplier supplier) {

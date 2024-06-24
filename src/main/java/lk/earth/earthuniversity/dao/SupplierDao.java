@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface SupplierDao extends JpaRepository<Supplier,Integer> {
 
     @Query("select s from Supplier s where s.regno=:regno")
@@ -19,5 +21,9 @@ public interface SupplierDao extends JpaRepository<Supplier,Integer> {
 
     @Query("select s from Supplier s where s.id=:id")
     Supplier findByMyId(@Param("id")Integer id);
+
+    @Query("select new Supplier(s.id,s.name) from Supplier s")
+    List<Supplier>findAllByIdAndName();
+
 }
 
