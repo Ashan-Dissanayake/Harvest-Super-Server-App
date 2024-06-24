@@ -90,7 +90,7 @@ public class SupplierController {
                 errors = errors + e.getMessage();
             }
         } else {
-            errors = errors + "<br> Non-Existing Supplier";
+            errors = errors + "<br> Supplier Does Not Existed";
         }
 
         response.put("id", String.valueOf(supplier.getId()));
@@ -98,6 +98,29 @@ public class SupplierController {
         response.put("errors", errors);
 
         return response;
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public HashMap<String, String> delete(@PathVariable Integer id) {
+
+
+        HashMap<String, String> responce = new HashMap<>();
+        String errors = "";
+
+        Supplier sup = supplierdao.findByMyId(id);
+
+        if (sup == null)
+            errors = errors + "<br> Supplier Does Not Existed";
+
+        if (errors.isEmpty()) supplierdao.delete(sup);
+        else errors = "Server Validation Errors : <br> " + errors;
+
+        responce.put("id", String.valueOf(id));
+        responce.put("url", "/suppliers/" + id);
+        responce.put("errors", errors);
+
+        return responce;
     }
 
 

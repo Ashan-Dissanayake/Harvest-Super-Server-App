@@ -1,5 +1,6 @@
 package lk.earth.earthuniversity.dao;
 
+import lk.earth.earthuniversity.entity.Employee;
 import lk.earth.earthuniversity.entity.Supplier;
 import lk.earth.earthuniversity.entity.Supplierstatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,5 +16,8 @@ public interface SupplierDao extends JpaRepository<Supplier,Integer> {
 
     @Query("select  s from  Supplier  s where  s.name=:name")
     Supplier findByName(@Param("name")String name);
+
+    @Query("select s from Supplier s where s.id=:id")
+    Supplier findByMyId(@Param("id")Integer id);
 }
 
