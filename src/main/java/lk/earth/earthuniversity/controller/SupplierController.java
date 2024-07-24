@@ -48,10 +48,7 @@ public class SupplierController {
         List<Supplier> suppliers = this.supplierdao.findAllByIdAndName();
 
         suppliers = suppliers.stream().map(
-                supplier -> {
-                    Supplier s = new Supplier(supplier.getId(), supplier.getName());
-                    return s;
-                }
+                supplier -> new Supplier(supplier.getId(), supplier.getName())
         ).collect(Collectors.toList());
 
         return suppliers;
