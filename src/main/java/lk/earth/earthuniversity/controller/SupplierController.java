@@ -33,7 +33,7 @@ public class SupplierController {
         String doregistered = params.get("doregistered");
 
         if (regno != null) sstream = sstream.filter(s -> s.getRegno().contains(regno));
-        if (doregistered != null) sstream = sstream.filter(u -> u.getDoregistered().toString().contains(doregistered));
+        if (doregistered != null) sstream = sstream.filter(u -> u.getDoregistered().toString().equals(doregistered));
         if (suppliertypeid != null)
             sstream = sstream.filter(s -> s.getSuppliertype().getId() == Integer.parseInt(suppliertypeid));
         if (supplierstatusid != null)

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/supplierstypes")
+@RequestMapping(value = "/suppliertypes")
 public class SuppliertypeController {
 
     @Autowired
