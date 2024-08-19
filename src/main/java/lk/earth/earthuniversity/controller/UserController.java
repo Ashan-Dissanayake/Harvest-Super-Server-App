@@ -162,7 +162,7 @@ public class UserController {
         if(use1==null)
             errors = errors+"<br> User Does Not Existed";
 
-        if(errors=="") userdao.delete(use1);
+        if(errors.isEmpty()) userdao.delete(use1);
         else errors = "Server Validation Errors : <br> "+errors;
 
         responce.put("username",String.valueOf(username));
