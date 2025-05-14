@@ -3,34 +3,33 @@ package lk.earth.earthuniversity.controller;
 import lk.earth.earthuniversity.dao.BrandDao;
 import lk.earth.earthuniversity.entity.Brand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/brands")
 public class BrandController {
 
-    @Autowired
-    private BrandDao branddao;
+    @Autowired private BrandDao branddao;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path ="/list", produces = "application/json")
-    public List<Brand> get(@RequestParam HashMap<String,String>params) {
+    public List<Brand> get() {
 
-        List<Brand> brands = new ArrayList<>();
+        List<Brand> brands = this.branddao.findAll();
 
-        if(params.isEmpty()) {
-           brands  = this.branddao.findAll();
-        }else {
-            String categoryid = params.get("categoryid");
-                brands = branddao.findAllByCategory(Integer.parseInt(categoryid));
-        }
-        return  brands;
+        brands = brands.stream().map(
+                brand -> { Brand b = new Brand();
+                    b.setId(brand.getId());
+                    b.setName(brand.getName());
+                    return b; }
+        ).collect(Collectors.toList());
+
+        return brands;
     }
 
 }

@@ -13,11 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    @Autowired private AuthenticationManager authenticationManager;
+    @Autowired private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login2")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {

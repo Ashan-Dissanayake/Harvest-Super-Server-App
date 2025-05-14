@@ -47,9 +47,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 hashedPassword =  loginRequest.getPassword();
             }
 
-            Authentication auth = authenticationManager.authenticate( new UsernamePasswordAuthenticationToken( loginRequest.getUsername(), hashedPassword ) );
-
-            return auth;
+            return authenticationManager.authenticate( new UsernamePasswordAuthenticationToken( loginRequest.getUsername(), hashedPassword ) );
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse login request", e);

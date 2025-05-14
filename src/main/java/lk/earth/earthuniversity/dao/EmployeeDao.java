@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface EmployeeDao extends JpaRepository<Employee,Integer> {
 
     Employee findByNumber(String number);
+
     Employee findByNic(String nic);
 
     @Query("select e from Employee e where e.id = :id")

@@ -2,6 +2,9 @@ package lk.earth.earthuniversity.entity;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.sql.Date;
 import java.sql.Time;

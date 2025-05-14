@@ -1,6 +1,7 @@
 package lk.earth.earthuniversity.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.sql.Date;
 import java.util.Collection;
@@ -43,7 +44,7 @@ public class Supplier {
     private String description;
     @Basic
     @Column(name = "contactperson")
-    @Pattern(regexp = "^(Mr|Mrs)\\s+[A-Za-z]+\\s+[A-Za-z]+\\s*[A-Za-z]*$",message = "Invalid Name")
+    @Pattern(regexp = "^(Mr.|Mrs.)\\s+[A-Za-z]+\\s+[A-Za-z]+\\s*[A-Za-z]*$",message = "Invalid Name")
     private String contactperson;
     @Basic
     @Column(name = "contactpersontp")
@@ -55,10 +56,12 @@ public class Supplier {
     @ManyToOne
     @JoinColumn(name = "supplierstatus_id", referencedColumnName = "id", nullable = false)
     private Supplierstatus supplierstatus;
+   
     @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,orphanRemoval = true)
     private Collection<Supply> supplies;
 
     public Supplier(){}
+   
     public Supplier(Integer id,String name){
         this.id = id;
         this.name = name;

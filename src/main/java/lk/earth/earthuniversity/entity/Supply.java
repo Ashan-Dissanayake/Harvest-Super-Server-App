@@ -13,6 +13,7 @@ public class Supply {
     @ManyToOne
     @JoinColumn(name = "subcategory_id", referencedColumnName = "id", nullable = false)
     private Subcategory subcategory;
+    
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "supplier_id", referencedColumnName = "id", nullable = false)
