@@ -72,6 +72,10 @@ public class Item {
     @JoinColumn(name = "itemstatus_id", referencedColumnName = "id", nullable = false)
     private Itemstatus itemstatus;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "item")
+    private Collection<Purchaseorderitem> purchaseorderitems;
+
     public Item(){}
 
     public Item(Integer id,String name){
@@ -217,4 +221,11 @@ public class Item {
         this.itemstatus = itemstatus;
     }
 
+    public Collection<Purchaseorderitem> getPurchaseorderitems() {
+        return purchaseorderitems;
+    }
+
+    public void setPurchaseorderitems(Collection<Purchaseorderitem> purchaseorderitems) {
+        this.purchaseorderitems = purchaseorderitems;
+    }
 }

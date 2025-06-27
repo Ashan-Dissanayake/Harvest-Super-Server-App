@@ -1,5 +1,7 @@
 package lk.earth.earthuniversity.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
@@ -60,8 +62,12 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,orphanRemoval = true)
     private Collection<Supply> supplies;
 
-    public Supplier(){}
+    @JsonIgnore
+    @OneToMany(mappedBy = "supplier")
+    private Collection<Purchaseorder> purchaseorders;
    
+    public Supplier(){}
+
     public Supplier(Integer id,String name){
         this.id = id;
         this.name = name;
@@ -219,5 +225,13 @@ public class Supplier {
 
     public void setSupplies(Collection<Supply> supplies) {
         this.supplies = supplies;
+    }
+
+    public Collection<Purchaseorder> getPurchaseorders() {
+        return purchaseorders;
+    }
+
+    public void setPurchaseorders(Collection<Purchaseorder> purchaseorders) {
+        this.purchaseorders = purchaseorders;
     }
 }
