@@ -1,6 +1,7 @@
 package lk.earth.earthuniversity.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Collection;
@@ -13,6 +14,7 @@ public class Purchaseorder {
     private Integer id;
     @Basic
     @Column(name = "number")
+    @Pattern(regexp = "^PO\\d{3}$", message = "Invalid Number")
     private String number;
     @Basic
     @Column(name = "doplaced")
@@ -38,7 +40,8 @@ public class Purchaseorder {
     @ManyToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private Employee employee;
-    @OneToMany(mappedBy = "purchaseorder")
+
+    @OneToMany(mappedBy = "purchaseorder",cascade = CascadeType.ALL,orphanRemoval = true)
     private Collection<Purchaseorderitem> purchaseorderitems;
 
     public Integer getId() {

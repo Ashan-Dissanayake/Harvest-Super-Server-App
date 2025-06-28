@@ -32,7 +32,7 @@ public class Supplier {
     private String tpland;
     @Basic
     @Column(name = "regno")
-    @Pattern(regexp = "^SP\\d{3}$", message = "Invalid Registration Number")
+    @Pattern(regexp = "^SP\\d{3}$", message = "Invalid Number")
     private String regno;
     @Basic
     @Column(name = "address")
