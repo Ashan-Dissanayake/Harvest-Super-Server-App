@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/purchaseorder")
+@RequestMapping(value = "/purchaseorders")
 public class PurchaseorderController {
 
     @Autowired private PurchaseorderDao purchaseorderdao;
@@ -122,7 +122,26 @@ public class PurchaseorderController {
         return response;
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public HashMap<String, String> delete(@PathVariable Integer id) {
 
+        HashMap<String, String> response = new HashMap<>();
+        String errors = "";
+
+        Purchaseorder extProduct = purchaseorderdao.findByMyId(id);
+
+        if (extProduct == null) errors = errors + "<br> Purchase Order Does Not Exist";
+
+        if (errors.isEmpty()) purchaseorderdao.delete(extProduct);
+        else errors = "Server Validation Errors : <br> " + errors;
+
+        response.put("id", String.valueOf(id));
+        response.put("url", "/purchaseorders/" + id);
+        response.put("errors", errors);
+
+        return response;
+    }
 
 }
 
