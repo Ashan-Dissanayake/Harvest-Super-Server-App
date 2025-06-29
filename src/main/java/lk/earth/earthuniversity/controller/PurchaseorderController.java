@@ -5,6 +5,7 @@ import lk.earth.earthuniversity.dao.PurchaseorderDao;
 import lk.earth.earthuniversity.entity.Purchaseorder;
 import lk.earth.earthuniversity.entity.Purchaseorder;
 import lk.earth.earthuniversity.entity.Purchaseorderitem;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,6 +83,44 @@ public class PurchaseorderController {
         return response;
     }
 
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public HashMap<String, String> update(@RequestBody Purchaseorder purchaseorder) {
+
+        HashMap<String, String> response = new HashMap<>();
+        String errors = "";
+
+        Purchaseorder extPurchaseorder = purchaseorderdao.findByMyId(purchaseorder.getId());
+
+        if (extPurchaseorder != null && !(purchaseorder.getNumber().equals(extPurchaseorder.getNumber())))
+            errors = errors + "<br> Not existing";
+
+        if (extPurchaseorder != null) {
+            try {
+                extPurchaseorder.getPurchaseorderitems().clear();
+                purchaseorder.getPurchaseorderitems().forEach(newPurchaseorderIM -> {
+                    newPurchaseorderIM.setPurchaseorder(extPurchaseorder);
+                    extPurchaseorder.getPurchaseorderitems().add(newPurchaseorderIM);
+                    newPurchaseorderIM.setPurchaseorder(extPurchaseorder);
+                });
+
+                BeanUtils.copyProperties(purchaseorder, extPurchaseorder, "id");
+
+                if (errors.isEmpty())purchaseorderdao.save(purchaseorder);
+                else errors = "Server Validation Errors : <br> " + errors;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        response.put("id", String.valueOf(purchaseorder.getId()));
+        response.put("url", "/purchaseorders/" + purchaseorder.getId());
+        response.put("errors", errors);
+
+        return response;
+    }
 
 
 
