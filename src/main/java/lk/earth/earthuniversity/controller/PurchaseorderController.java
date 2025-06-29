@@ -67,6 +67,12 @@ public class PurchaseorderController {
 
         for (Purchaseorderitem pi : purchaseorder.getPurchaseorderitems()) pi.setPurchaseorder(purchaseorder);
 
+        if (this.purchaseorderdao.findByNumber(purchaseorder.getNumber()) != null)
+            errors = errors + "<br> Existing Purchase Order";
+
+        if (errors.isEmpty()) purchaseorderdao.save(purchaseorder);
+        else errors = "Server Validation Errors : <br> " + errors;
+
         purchaseorderdao.save(purchaseorder);
 
         response.put("id", String.valueOf(purchaseorder.getId()));
@@ -74,8 +80,9 @@ public class PurchaseorderController {
         response.put("errors", errors);
 
         return response;
-
     }
+
+
 
 
 }
