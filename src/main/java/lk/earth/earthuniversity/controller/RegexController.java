@@ -1,9 +1,9 @@
 package lk.earth.earthuniversity.controller;
 
-import lk.earth.earthuniversity.entity.Employee;
-import lk.earth.earthuniversity.entity.Item;
-import lk.earth.earthuniversity.entity.Supplier;
-import lk.earth.earthuniversity.entity.User;
+import lk.earth.earthuniversity.model.entity.Employee;
+import lk.earth.earthuniversity.model.entity.Item;
+import lk.earth.earthuniversity.model.entity.Supplier;
+import lk.earth.earthuniversity.model.entity.User;
 import lk.earth.earthuniversity.util.RegexProvider;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

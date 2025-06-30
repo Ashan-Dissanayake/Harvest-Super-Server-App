@@ -1,7 +1,7 @@
 package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.BrandDao;
-import lk.earth.earthuniversity.entity.Brand;
+import lk.earth.earthuniversity.model.entity.Brand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,6 @@ public class BrandController {
 
     @Autowired private BrandDao branddao;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path ="/list", produces = "application/json")
     public List<Brand> get() {
 

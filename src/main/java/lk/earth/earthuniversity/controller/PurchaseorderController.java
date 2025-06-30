@@ -1,14 +1,11 @@
 package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.PurchaseorderDao;
-import lk.earth.earthuniversity.dao.PurchaseorderDao;
-import lk.earth.earthuniversity.entity.Purchaseorder;
-import lk.earth.earthuniversity.entity.Purchaseorder;
-import lk.earth.earthuniversity.entity.Purchaseorderitem;
+import lk.earth.earthuniversity.model.entity.Purchaseorder;
+import lk.earth.earthuniversity.model.entity.Purchaseorderitem;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.SuppliertypeDao;
-import lk.earth.earthuniversity.entity.Suppliertype;
+import lk.earth.earthuniversity.model.entity.Suppliertype;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

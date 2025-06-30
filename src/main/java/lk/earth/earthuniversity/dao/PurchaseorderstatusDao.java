@@ -1,6 +1,6 @@
 package lk.earth.earthuniversity.dao;
 
-import lk.earth.earthuniversity.entity.Purchaseorderstatus;
+import lk.earth.earthuniversity.model.entity.Purchaseorderstatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

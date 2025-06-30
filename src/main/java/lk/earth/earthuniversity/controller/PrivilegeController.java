@@ -2,9 +2,7 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.PrivilegeDao;
-import lk.earth.earthuniversity.entity.Operation;
-import lk.earth.earthuniversity.entity.Opetype;
-import lk.earth.earthuniversity.entity.Privilege;
+import lk.earth.earthuniversity.model.entity.Privilege;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

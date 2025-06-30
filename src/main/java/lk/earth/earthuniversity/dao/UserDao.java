@@ -1,7 +1,7 @@
 package lk.earth.earthuniversity.dao;
 
 
-import lk.earth.earthuniversity.entity.User;
+import lk.earth.earthuniversity.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

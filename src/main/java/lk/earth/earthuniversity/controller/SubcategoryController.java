@@ -1,7 +1,7 @@
 package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.SubcategoryDao;
-import lk.earth.earthuniversity.entity.Subcategory;
+import lk.earth.earthuniversity.model.entity.Subcategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

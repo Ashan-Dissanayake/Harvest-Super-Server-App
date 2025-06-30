@@ -2,7 +2,7 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.OpetypeDao;
-import lk.earth.earthuniversity.entity.Opetype;
+import lk.earth.earthuniversity.model.entity.Opetype;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,7 +1,7 @@
 package lk.earth.earthuniversity.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lk.earth.earthuniversity.entity.User;
+import lk.earth.earthuniversity.model.entity.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

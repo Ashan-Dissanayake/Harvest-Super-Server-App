@@ -2,9 +2,9 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.UserDao;
-import lk.earth.earthuniversity.entity.Employee;
-import lk.earth.earthuniversity.entity.User;
-import lk.earth.earthuniversity.entity.Userrole;
+import lk.earth.earthuniversity.model.entity.Employee;
+import lk.earth.earthuniversity.model.entity.User;
+import lk.earth.earthuniversity.model.entity.Userrole;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

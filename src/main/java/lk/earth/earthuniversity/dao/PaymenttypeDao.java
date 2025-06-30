@@ -1,6 +1,6 @@
 package lk.earth.earthuniversity.dao;
 
-import lk.earth.earthuniversity.entity.Paymenttype;
+import lk.earth.earthuniversity.model.entity.Paymenttype;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

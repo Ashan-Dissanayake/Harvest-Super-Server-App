@@ -88,9 +88,9 @@
 package lk.earth.earthuniversity.security;
 
 import lk.earth.earthuniversity.dao.UserDao;
-import lk.earth.earthuniversity.entity.Privilege;
-import lk.earth.earthuniversity.entity.User;
-import lk.earth.earthuniversity.entity.Userrole;
+import lk.earth.earthuniversity.model.entity.Privilege;
+import lk.earth.earthuniversity.model.entity.User;
+import lk.earth.earthuniversity.model.entity.Userrole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

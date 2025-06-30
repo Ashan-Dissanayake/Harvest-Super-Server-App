@@ -2,7 +2,7 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.UsestatusDao;
-import lk.earth.earthuniversity.entity.Usestatus;
+import lk.earth.earthuniversity.model.entity.Usestatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

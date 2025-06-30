@@ -2,8 +2,7 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.OperationDao;
-import lk.earth.earthuniversity.entity.Empstatus;
-import lk.earth.earthuniversity.entity.Operation;
+import lk.earth.earthuniversity.model.entity.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

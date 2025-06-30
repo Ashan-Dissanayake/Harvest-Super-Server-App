@@ -1,11 +1,18 @@
 package lk.earth.earthuniversity.controller;
 import lk.earth.earthuniversity.dao.EmployeeDao;
-import lk.earth.earthuniversity.entity.Employee;
+import lk.earth.earthuniversity.exception.ResourceExistsException;
+import lk.earth.earthuniversity.exception.ResourceNotFoundException;
+import lk.earth.earthuniversity.model.entity.Employee;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import java.util.List;
@@ -20,12 +27,12 @@ public class EmployeeController {
     private EmployeeDao employeedao;
 
     @GetMapping(produces = "application/json")
-//    @PreAuthorize("hasAuthority('employee-select')")p
-    public List<Employee> get(@RequestParam HashMap<String, String> params) {
+//    @PreAuthorize("hasAuthority('employee-select')")
+    public ResponseEntity<APISuccessResponse<List<Employee>>> get(@RequestParam HashMap<String, String> params) {
 
         List<Employee> employees = this.employeedao.findAll();
 
-        if(params.isEmpty())  return employees;
+        if(params.isEmpty()) return APIResponseBuilder.getResponse(employees, employees.size());
 
         String number = params.get("number");
         String genderid= params.get("genderid");
@@ -41,101 +48,74 @@ public class EmployeeController {
         if(nic!=null) estream = estream.filter(e -> e.getNic().contains(nic));
         if(fullname!=null) estream = estream.filter(e -> e.getFullname().contains(fullname));
 
-        return estream.collect(Collectors.toList());
+        employees = estream.collect(Collectors.toList());
+
+        return APIResponseBuilder.getResponse(employees, employees.size());
 
     }
 
     @GetMapping(path ="/list",produces = "application/json")
-    public List<Employee> get() {
+    public ResponseEntity<APISuccessResponse<List<Employee>>> get() {
 
         List<Employee> employees = this.employeedao.findAllNameId();
 
         employees = employees.stream().map(
                 employee -> {
-                    Employee e = new Employee(employee.getId(), employee.getCallingname());
-                    return  e;
+                    return new Employee(employee.getId(), employee.getCallingname());
                 }
         ).collect(Collectors.toList());
 
-        return employees;
+        return APIResponseBuilder.getResponse(employees, employees.size());
 
     }
-
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasAuthority('Employee-Insert')")
-    public HashMap<String,String> add(@RequestBody Employee employee){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+    public ResponseEntity<APISuccessResponse<Employee>> add(@RequestBody Employee employee){
 
         if(employeedao.findByNumber(employee.getNumber())!=null)
-            errors = errors+"<br> Existing Number";
+            throw new ResourceExistsException("Employee already exists with this Number: " + employee.getNumber());
         if(employeedao.findByNic(employee.getNic())!=null)
-            errors = errors+"<br> Existing NIC";
+            throw new ResourceExistsException("Employee already exists with this NIC: " + employee.getNic());
 
-        if(errors=="")
-        employeedao.save(employee);
-        else errors = "Server Validation Errors : <br> "+errors;
+        Employee savedEmployee =  employeedao.save(employee);
 
-        responce.put("id",String.valueOf(employee.getId()));
-        responce.put("url","/employees/"+employee.getId());
-        responce.put("errors",errors);
-
-        return responce;
+        return APIResponseBuilder.postResponse(savedEmployee,savedEmployee.getId());
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasAuthority('Employee-Update')")
-    public HashMap<String,String> update(@RequestBody Employee employee){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+    public ResponseEntity<APISuccessResponse<Employee>> update(@RequestBody Employee employee){
 
         Employee emp1 = employeedao.findByNumber(employee.getNumber());
         Employee emp2 = employeedao.findByNic(employee.getNic());
 
-        if(emp1!=null && employee.getId()!=emp1.getId())
-            errors = errors+"<br> Existing Number";
-        if(emp2!=null && employee.getId()!=emp2.getId())
-            errors = errors+"<br> Existing NIC";
+        if(emp1!=null && !Objects.equals(employee.getId(), emp1.getId()))
+            throw new ResourceExistsException("Employee already exists with this Number: " + employee.getNumber());
+        if(emp2!=null && !Objects.equals(employee.getId(), emp2.getId()))
+            throw new ResourceExistsException("Employee already exists with this NIC: " + employee.getNic());
 
-        if(errors=="") employeedao.save(employee);
-        else errors = "Server Validation Errors : <br> "+errors;
+        Employee updatedEmployee =  employeedao.save(employee);
 
-        responce.put("id",String.valueOf(employee.getId()));
-        responce.put("url","/employees/"+employee.getId());
-        responce.put("errors",errors);
-
-        return responce;
+        return APIResponseBuilder.putResponse(updatedEmployee,updatedEmployee.getId());
     }
 
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String,String> delete(@PathVariable Integer id){
-
-        System.out.println(id);
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+    public ResponseEntity<APISuccessResponse<Employee>> delete(@PathVariable Integer id){
 
         Employee emp1 = employeedao.findByMyId(id);
 
-        if(emp1==null)
-            errors = errors+"<br> Employee Does Not Existed";
+        if(emp1==null) throw new ResourceNotFoundException("Employee not exists with this id: " + id);
 
-        if(errors=="") employeedao.delete(emp1);
-        else errors = "Server Validation Errors : <br> "+errors;
+        employeedao.delete(emp1);
 
-        responce.put("id",String.valueOf(id));
-        responce.put("url","/employees/"+id);
-        responce.put("errors",errors);
-
-        return responce;
+        return APIResponseBuilder.deleteResponse(id);
     }
+
 
 }
 

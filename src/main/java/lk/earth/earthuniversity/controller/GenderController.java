@@ -1,14 +1,18 @@
 package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.GenderDao;
-import lk.earth.earthuniversity.entity.Gender;
+import lk.earth.earthuniversity.model.entity.Gender;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 @CrossOrigin
 @RestController
@@ -19,7 +23,7 @@ public class GenderController {
     private GenderDao genderdao;
 
     @GetMapping(path ="/list",produces = "application/json")
-    public List<Gender> get() {
+    public ResponseEntity<APISuccessResponse<List<Gender>>> get() {
 
         List<Gender> genders = this.genderdao.findAll();
 
@@ -30,7 +34,7 @@ public class GenderController {
                             return g; }
         ).collect(Collectors.toList());
 
-        return genders;
+        return APIResponseBuilder.getResponse(genders, genders.size());
 
     }
 

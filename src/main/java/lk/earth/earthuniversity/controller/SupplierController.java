@@ -2,7 +2,9 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.SupplierDao;
-import lk.earth.earthuniversity.entity.*;
+import lk.earth.earthuniversity.model.entity.Subcategory;
+import lk.earth.earthuniversity.model.entity.Supplier;
+import lk.earth.earthuniversity.model.entity.Supply;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

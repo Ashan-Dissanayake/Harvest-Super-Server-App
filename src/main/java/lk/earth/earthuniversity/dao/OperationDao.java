@@ -1,7 +1,6 @@
 package lk.earth.earthuniversity.dao;
 
-import lk.earth.earthuniversity.entity.Operation;
-import lk.earth.earthuniversity.entity.Privilege;
+import lk.earth.earthuniversity.model.entity.Operation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

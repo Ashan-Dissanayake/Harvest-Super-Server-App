@@ -1,14 +1,11 @@
 package lk.earth.earthuniversity.dao;
 
-import lk.earth.earthuniversity.entity.Employee;
+import lk.earth.earthuniversity.model.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.repository.query.QueryLookupStrategy;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface EmployeeDao extends JpaRepository<Employee,Integer> {
 

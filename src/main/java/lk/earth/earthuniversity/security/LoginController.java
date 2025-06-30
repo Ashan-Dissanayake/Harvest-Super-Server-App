@@ -1,6 +1,6 @@
 package lk.earth.earthuniversity.security;
 
-import lk.earth.earthuniversity.entity.User;
+import lk.earth.earthuniversity.model.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

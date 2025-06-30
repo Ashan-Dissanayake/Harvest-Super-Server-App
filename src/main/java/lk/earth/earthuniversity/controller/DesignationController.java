@@ -1,14 +1,18 @@
 package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.DesignationDao;
-import lk.earth.earthuniversity.entity.Designation;
+import lk.earth.earthuniversity.model.entity.Designation;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @CrossOrigin
@@ -20,7 +24,7 @@ public class DesignationController {
     private DesignationDao designationdao;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public List<Designation> get() {
+    public ResponseEntity<APISuccessResponse<List<Designation>>> get() {
 
         List<Designation> designations = this.designationdao.findAll();
 
@@ -31,7 +35,8 @@ public class DesignationController {
                     return d; }
         ).collect(Collectors.toList());
 
-        return designations;
+        return APIResponseBuilder.getResponse(designations, designations.size());
+
 
     }
 
