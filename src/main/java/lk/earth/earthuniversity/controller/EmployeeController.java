@@ -69,7 +69,6 @@ public class EmployeeController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
 //  @PreAuthorize("hasAuthority('Employee-Insert')")
     public ResponseEntity<APISuccessResponse<Employee>> add(@RequestBody Employee employee){
 
@@ -84,7 +83,6 @@ public class EmployeeController {
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
 //  @PreAuthorize("hasAuthority('Employee-Update')")
     public ResponseEntity<APISuccessResponse<Employee>> update(@RequestBody Employee employee){
 
@@ -102,7 +100,6 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<APISuccessResponse<Employee>> delete(@PathVariable Integer id){
 
         Employee emp = employeedao.findByMyId(id);

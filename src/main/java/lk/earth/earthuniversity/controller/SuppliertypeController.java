@@ -2,7 +2,10 @@ package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.SuppliertypeDao;
 import lk.earth.earthuniversity.model.entity.Suppliertype;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +23,7 @@ public class SuppliertypeController {
     private SuppliertypeDao suppliertypedao;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public List<Suppliertype> get() {
+    public ResponseEntity<APISuccessResponse<List<Suppliertype>>> get() {
 
         List<Suppliertype> suppliertypes = this.suppliertypedao.findAll();
 
@@ -31,7 +34,7 @@ public class SuppliertypeController {
                     return d; }
         ).collect(Collectors.toList());
 
-        return suppliertypes;
+        return APIResponseBuilder.getResponse(suppliertypes, suppliertypes.size());
 
     }
 

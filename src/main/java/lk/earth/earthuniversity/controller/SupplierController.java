@@ -2,12 +2,19 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.SupplierDao;
+import lk.earth.earthuniversity.exception.ResourceExistsException;
+import lk.earth.earthuniversity.exception.ResourceNotFoundException;
+import lk.earth.earthuniversity.model.entity.Item;
 import lk.earth.earthuniversity.model.entity.Subcategory;
 import lk.earth.earthuniversity.model.entity.Supplier;
 import lk.earth.earthuniversity.model.entity.Supply;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,30 +29,31 @@ public class SupplierController {
     @Autowired private SupplierDao supplierdao;
 
     @GetMapping(produces = "application/json")
-    public List<Supplier> get(@RequestParam HashMap<String, String> params) {
+    public ResponseEntity<APISuccessResponse<List<Supplier>>> get(@RequestParam HashMap<String, String> params) {
 
-        Stream<Supplier> sstream = this.supplierdao.findAll().stream();
-        sstream = sstream.peek((s) -> s.getSupplies().forEach((sp) -> sp.setSubcategory(new Subcategory(sp.getSubcategory().getId(), sp.getSubcategory().getName()))));
+        List<Supplier> suppliers = this.supplierdao.findAll();
 
-        if (params.isEmpty()) return sstream.collect(Collectors.toList());
+        if (params.isEmpty()) return APIResponseBuilder.getResponse(suppliers, suppliers.size());
 
         String regno = params.get("regno");
         String suppliertypeid = params.get("suppliertypeid");
         String supplierstatusid = params.get("supplierstatusid");
         String doregistered = params.get("doregistered");
 
-        if (regno != null) sstream = sstream.filter(s -> s.getRegno().contains(regno));
-        if (doregistered != null) sstream = sstream.filter(u -> u.getDoregistered().toString().contains(doregistered));
-        if (suppliertypeid != null)
-            sstream = sstream.filter(s -> s.getSuppliertype().getId() == Integer.parseInt(suppliertypeid));
-        if (supplierstatusid != null)
-            sstream = sstream.filter(u -> u.getSupplierstatus().getId() == Integer.parseInt(supplierstatusid));
+        Stream<Supplier>  sstream =suppliers.stream();
 
-        return sstream.collect(Collectors.toList());
+        if (params.containsKey("regno")) sstream = sstream.filter(s -> s.getRegno().contains(regno));
+        if (doregistered != null) sstream = sstream.filter(u -> u.getDoregistered().toString().contains(doregistered));
+        if (suppliertypeid != null) sstream = sstream.filter(s -> s.getSuppliertype().getId() == Integer.parseInt(suppliertypeid));
+        if (supplierstatusid != null) sstream = sstream.filter(u -> u.getSupplierstatus().getId() == Integer.parseInt(supplierstatusid));
+
+        suppliers = sstream.collect(Collectors.toList());
+
+        return APIResponseBuilder.getResponse(suppliers, suppliers.size());
     }
 
     @GetMapping(path = "/list", produces = "application/json")
-    public List<Supplier> get() {
+    public ResponseEntity<APISuccessResponse<List<Supplier>>> get() {
 
         List<Supplier> suppliers = this.supplierdao.findAllByIdAndName();
 
@@ -53,88 +61,55 @@ public class SupplierController {
                 supplier -> new Supplier(supplier.getId(), supplier.getName())
         ).collect(Collectors.toList());
 
-        return suppliers;
+        return APIResponseBuilder.getResponse(suppliers, suppliers.size());
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String, String> add(@RequestBody Supplier supplier) {
-
-        HashMap<String, String> responce = new HashMap<>();
-        String errors = "";
+    public ResponseEntity<APISuccessResponse<Supplier>> add(@RequestBody Supplier supplier) {
 
         for (Supply s : supplier.getSupplies()) s.setSupplier(supplier);
 
-        if (supplierdao.findByRegno(supplier.getRegno()) != null) errors = errors + "<br> Existing Reg No";
-        if (supplierdao.findByName(supplier.getName()) != null) errors = errors + "<br> Existing Name";
+        if (supplierdao.findByRegno(supplier.getRegno()) != null)
+            throw new ResourceExistsException("Item already exists with this Reg No: " + supplier.getRegno());
+        if (supplierdao.findByName(supplier.getName()) != null)
+            throw new ResourceExistsException("Item already exists with this Existing Name: " + supplier.getName());
 
-        if (errors.isEmpty()) supplierdao.save(supplier);
-        else errors = "Server Validation Errors : <br> "+errors;
+        Supplier savedSupplier = supplierdao.save(supplier);
 
-        responce.put("id", String.valueOf(supplier.getId()));
-        responce.put("url", "/suppliers/" + supplier.getId());
-        responce.put("errors", errors);
-
-        return responce;
+        return APIResponseBuilder.postResponse(savedSupplier,savedSupplier.getId());
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String, String> update(@RequestBody Supplier supplier) {
-        HashMap<String, String> response = new HashMap<>();
-
-        String errors = "";
+    @Transactional
+    public ResponseEntity<APISuccessResponse<Supplier>> update(@RequestBody Supplier supplier) {
 
         Supplier extsup = supplierdao.findByRegno(supplier.getRegno());
 
-        if (extsup != null) {
+        if (extsup == null)
+            throw new ResourceNotFoundException("Supplier not exists with this name: " + supplier.getName());
 
-            try {
-                extsup.getSupplies().clear();
-                supplier.getSupplies().forEach(nsupplies -> {
-                    nsupplies.setSupplier(extsup);
-                    extsup.getSupplies().add(nsupplies);
-                });
-
-                BeanUtils.copyProperties(supplier, extsup, "id", "supplies");
-
-                supplierdao.save(extsup);
-
-            } catch (Exception e) {
-                errors = errors + e.getMessage();
-            }
-        } else {
-            errors = errors + "<br> Supplier Does Not Existed";
+        if (supplier.getSupplies() != null) {
+            extsup.getSupplies().clear();
+            supplier.getSupplies().forEach(s -> s.setSupplier(extsup));
+            extsup.getSupplies().addAll(supplier.getSupplies());
         }
 
-        response.put("id", String.valueOf(supplier.getId()));
-        response.put("url", "/suppliers/" + supplier.getId());
-        response.put("errors", errors);
+        Supplier updatedSupplier = supplierdao.save(extsup);
 
-        return response;
+        return APIResponseBuilder.putResponse(updatedSupplier,updatedSupplier.getId());
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String, String> delete(@PathVariable Integer id) {
-
-
-        HashMap<String, String> responce = new HashMap<>();
-        String errors = "";
+    public ResponseEntity<APISuccessResponse<Supplier>> delete(@PathVariable Integer id) {
 
         Supplier sup = supplierdao.findByMyId(id);
 
         if (sup == null)
-            errors = errors + "<br> Supplier Does Not Existed";
+            throw new ResourceNotFoundException("Supplier not exists with this id: " + id);
 
-        if (errors.isEmpty()) supplierdao.delete(sup);
-        else errors = "Server Validation Errors : <br> " + errors;
+        supplierdao.delete(sup);
 
-        responce.put("id", String.valueOf(id));
-        responce.put("url", "/suppliers/" + id);
-        responce.put("errors", errors);
-
-        return responce;
+        return APIResponseBuilder.deleteResponse(id);
     }
 
 

@@ -50,7 +50,6 @@ public class ItemController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
 //  @PreAuthorize("hasAuthority('Item-Insert')")
     public ResponseEntity<APISuccessResponse<Item>> add(@RequestBody Item item){
 
@@ -65,7 +64,6 @@ public class ItemController {
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
 //  @PreAuthorize("hasAuthority('Item-Update')")
     public ResponseEntity<APISuccessResponse<Item>> update(@RequestBody Item item){
 
@@ -83,7 +81,6 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<APISuccessResponse<Item>> delete(@PathVariable Integer id){
 
         Item itm = itemdao.findByMyId(id);
