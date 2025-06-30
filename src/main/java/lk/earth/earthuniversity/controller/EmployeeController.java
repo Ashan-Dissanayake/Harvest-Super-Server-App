@@ -23,11 +23,10 @@ import java.util.stream.Stream;
 @RequestMapping(value = "/employees")
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeDao employeedao;
+    @Autowired private EmployeeDao employeedao;
 
     @GetMapping(produces = "application/json")
-//    @PreAuthorize("hasAuthority('employee-select')")
+//  @PreAuthorize("hasAuthority('employee-select')")
     public ResponseEntity<APISuccessResponse<List<Employee>>> get(@RequestParam HashMap<String, String> params) {
 
         List<Employee> employees = this.employeedao.findAll();
@@ -71,7 +70,7 @@ public class EmployeeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Employee-Insert')")
+//  @PreAuthorize("hasAuthority('Employee-Insert')")
     public ResponseEntity<APISuccessResponse<Employee>> add(@RequestBody Employee employee){
 
         if(employeedao.findByNumber(employee.getNumber())!=null)
@@ -86,7 +85,7 @@ public class EmployeeController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAuthority('Employee-Update')")
+//  @PreAuthorize("hasAuthority('Employee-Update')")
     public ResponseEntity<APISuccessResponse<Employee>> update(@RequestBody Employee employee){
 
         Employee emp1 = employeedao.findByNumber(employee.getNumber());
@@ -102,16 +101,16 @@ public class EmployeeController {
         return APIResponseBuilder.putResponse(updatedEmployee,updatedEmployee.getId());
     }
 
-
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<APISuccessResponse<Employee>> delete(@PathVariable Integer id){
 
-        Employee emp1 = employeedao.findByMyId(id);
+        Employee emp = employeedao.findByMyId(id);
 
-        if(emp1==null) throw new ResourceNotFoundException("Employee not exists with this id: " + id);
+        if(emp==null)
+            throw new ResourceNotFoundException("Employee not exists with this id: " + id);
 
-        employeedao.delete(emp1);
+        employeedao.delete(emp);
 
         return APIResponseBuilder.deleteResponse(id);
     }

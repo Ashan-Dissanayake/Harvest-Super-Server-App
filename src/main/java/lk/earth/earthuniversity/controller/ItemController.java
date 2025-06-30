@@ -1,9 +1,15 @@
 package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.ItemDao;
+import lk.earth.earthuniversity.exception.ResourceExistsException;
+import lk.earth.earthuniversity.exception.ResourceNotFoundException;
+import lk.earth.earthuniversity.model.entity.Employee;
 import lk.earth.earthuniversity.model.entity.Item;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,16 +23,15 @@ import java.util.stream.Stream;
 @RequestMapping(value = "/items")
 public class ItemController {
 
-    @Autowired
-    private ItemDao itemdao;
+    @Autowired private ItemDao itemdao;
 
     @GetMapping(produces = "application/json")
-//  @PreAuthorize("hasAuthority('item-select')")p
-    public List<Item> get(@RequestParam HashMap<String, String> params) {
+//  @PreAuthorize("hasAuthority('item-select')")
+    public ResponseEntity<APISuccessResponse<List<Item>>> get(@RequestParam HashMap<String, String> params) {
 
         List<Item> items = this.itemdao.findAll();
 
-        if(params.isEmpty())  return items;
+        if(params.isEmpty())  return APIResponseBuilder.getResponse(items, items.size());
 
         String itemname = params.get("itemname");
         String itemstatusid= params.get("itemstatusid");
@@ -38,83 +43,58 @@ public class ItemController {
         if(itemstatusid!=null)istream = istream.filter(i->i.getItemstatus().getId()==Integer.parseInt(itemstatusid));
         if(categoryid!=null)istream = istream.filter(i->i.getSubcategory().getCategory().getId()==Integer.parseInt(categoryid));
 
-        return istream.collect(Collectors.toList());
+        items = istream.collect(Collectors.toList());
+
+        return APIResponseBuilder.getResponse(items, items.size());
 
     }
-    
-    
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
 //  @PreAuthorize("hasAuthority('Item-Insert')")
-    public HashMap<String,String> add(@RequestBody Item item){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+    public ResponseEntity<APISuccessResponse<Item>> add(@RequestBody Item item){
 
         if(itemdao.findByItemCode(item.getCode())!=null)
-            errors = errors+"<br> Existing Code";
+            throw new ResourceExistsException("Item already exists with this Code: " + item.getCode());
         if(itemdao.findByItemName(item.getName())!=null)
-            errors = errors+"<br> Existing Name";
+            throw new ResourceExistsException("Item already exists with this Name: " + item.getName());
 
-        if(errors.isEmpty())
-        itemdao.save(item);
-        else errors = "Server Validation Errors : <br> "+errors;
+        Item savedItem = itemdao.save(item);
 
-        responce.put("id",String.valueOf(item.getId()));
-        responce.put("url","/items/"+item.getId());
-        responce.put("errors",errors);
-
-        return responce;
+        return APIResponseBuilder.postResponse(savedItem,savedItem.getId());
     }
-
 
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
 //  @PreAuthorize("hasAuthority('Item-Update')")
-    public HashMap<String,String> update(@RequestBody Item item){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+    public ResponseEntity<APISuccessResponse<Item>> update(@RequestBody Item item){
 
         Item itm1 = itemdao.findByItemCode(item.getCode());
         Item itm2 = itemdao.findByItemName(item.getName());
 
         if(itm1!=null && !Objects.equals(item.getId(), itm1.getId()))
-            errors = errors+"<br> Existing Code";
+            throw new ResourceExistsException("Item already exists with this Code: " + item.getCode());
         if(itm2!=null && !Objects.equals(item.getId(), itm2.getId()))
-            errors = errors+"<br> Existing Name";
+            throw new ResourceExistsException("Item already exists with this Name: " + item.getName());
 
-        if(errors.isEmpty()) itemdao.save(item);
-        else errors = "Server Validation Errors : <br> "+errors;
+       Item updatedItem = itemdao.save(item);
 
-        responce.put("id",String.valueOf(item.getId()));
-        responce.put("url","/items/"+item.getId());
-        responce.put("errors",errors);
-
-        return responce;
+       return APIResponseBuilder.putResponse(updatedItem,updatedItem.getId());
     }
-
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String,String> delete(@PathVariable Integer id){
-
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+    public ResponseEntity<APISuccessResponse<Item>> delete(@PathVariable Integer id){
 
         Item itm = itemdao.findByMyId(id);
 
         if(itm==null)
-            errors = errors+"<br> Item Does Not Existed";
+            throw new ResourceNotFoundException("Item not exists with this id: " + id);
 
-        if(errors.isEmpty()) itemdao.delete(itm);
-        else errors = "Server Validation Errors : <br> "+errors;
+        itemdao.delete(itm);
 
-        responce.put("id",String.valueOf(id));
-        responce.put("url","/items/"+id);
-        responce.put("errors",errors);
+        return APIResponseBuilder.deleteResponse(id);
 
-        return responce;
     }
 
 }
