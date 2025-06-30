@@ -65,6 +65,7 @@ public class SupplierController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<APISuccessResponse<Supplier>> add(@RequestBody Supplier supplier) {
 
         for (Supply s : supplier.getSupplies()) s.setSupplier(supplier);
@@ -111,7 +112,6 @@ public class SupplierController {
 
         return APIResponseBuilder.deleteResponse(id);
     }
-
 
 
 }

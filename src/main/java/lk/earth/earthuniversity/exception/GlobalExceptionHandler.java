@@ -1,12 +1,13 @@
 package lk.earth.earthuniversity.exception;
 
-import jakarta.servlet.http.HttpServletRequest;
-import lk.ashan.demo.model.response.APIErrorResponse;
-import lk.ashan.demo.model.response.ErrorCode;
-import lk.ashan.demo.util.APIResponseBuilder;
+import lk.earth.earthuniversity.model.response.APIErrorResponse;
+import lk.earth.earthuniversity.model.response.ErrorCode;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

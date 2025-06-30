@@ -2,7 +2,10 @@ package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.PurchaseorderstatusDao;
 import lk.earth.earthuniversity.model.entity.Purchaseorderstatus;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +23,7 @@ public class PurchaseorderstatusController {
     private PurchaseorderstatusDao purchaseorderstatusdao;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public List<Purchaseorderstatus> get() {
+    public ResponseEntity<APISuccessResponse<List<Purchaseorderstatus>>> get() {
 
         List<Purchaseorderstatus> purchaseorderstatuses = this.purchaseorderstatusdao.findAll();
 
@@ -31,7 +34,7 @@ public class PurchaseorderstatusController {
                     return i; }
         ).collect(Collectors.toList());
 
-        return purchaseorderstatuses;
+        return APIResponseBuilder.getResponse(purchaseorderstatuses, purchaseorderstatuses.size());
 
     }
 

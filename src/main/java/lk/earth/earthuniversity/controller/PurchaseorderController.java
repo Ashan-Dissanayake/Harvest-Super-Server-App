@@ -1,11 +1,17 @@
 package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.PurchaseorderDao;
+import lk.earth.earthuniversity.exception.ResourceExistsException;
+import lk.earth.earthuniversity.exception.ResourceNotFoundException;
 import lk.earth.earthuniversity.model.entity.Purchaseorder;
 import lk.earth.earthuniversity.model.entity.Purchaseorderitem;
+import lk.earth.earthuniversity.model.entity.Supplier;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,10 +27,11 @@ public class PurchaseorderController {
     @Autowired private PurchaseorderDao purchaseorderdao;
 
     @GetMapping(produces = "application/json")
-    public List<Purchaseorder> get(@RequestParam HashMap<String,String> params) {
+    public ResponseEntity<APISuccessResponse<List<Purchaseorder>>> get(@RequestParam HashMap<String,String> params) {
 
         List<Purchaseorder> purchaseorders = this.purchaseorderdao.findAll();
-        if(params.isEmpty()) return purchaseorders;
+
+        if(params.isEmpty()) return APIResponseBuilder.getResponse(purchaseorders, purchaseorders.size());
 
         String ponumber = params.get("number");
         String doplaced = params.get("doplaced");
@@ -36,12 +43,14 @@ public class PurchaseorderController {
         if(!doplaced.isEmpty()) spurchaseorders = spurchaseorders.filter((p)-> p.getDoplaced().toString().equals(doplaced));
         if(!statusid.isEmpty()) spurchaseorders = spurchaseorders.filter((p)-> p.getPurchaseorderstatus().getId()== Integer.parseInt(statusid));
 
-        return spurchaseorders.collect(Collectors.toList());
+        purchaseorders = spurchaseorders.collect(Collectors.toList());
+
+        return  APIResponseBuilder.getResponse(purchaseorders, purchaseorders.size());
 
     }
 
     @GetMapping(path ="/list", produces = "application/json")
-    public List<Purchaseorder> get() {
+    public ResponseEntity<APISuccessResponse<List<Purchaseorder>>> get() {
 
         List<Purchaseorder> purchaseorders = this.purchaseorderdao.findAll();
 
@@ -52,92 +61,58 @@ public class PurchaseorderController {
                     return i; }
         ).collect(Collectors.toList());
 
-        return purchaseorders;
+        return APIResponseBuilder.getResponse(purchaseorders, purchaseorders.size());
 
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String, String> add(@RequestBody Purchaseorder purchaseorder) {
-
-        HashMap<String, String> response = new HashMap<>();
-        String errors = "";
+    @Transactional
+    public ResponseEntity<APISuccessResponse<Purchaseorder>> add(@RequestBody Purchaseorder purchaseorder) {
 
         for (Purchaseorderitem pi : purchaseorder.getPurchaseorderitems()) pi.setPurchaseorder(purchaseorder);
 
         if (this.purchaseorderdao.findByNumber(purchaseorder.getNumber()) != null)
-            errors = errors + "<br> Existing Purchase Order";
+            throw new ResourceExistsException("Purchase order already exists with this No: " + purchaseorder.getNumber());
 
-        if (errors.isEmpty()) purchaseorderdao.save(purchaseorder);
-        else errors = "Server Validation Errors : <br> " + errors;
+       Purchaseorder savedPurchaseorder = purchaseorderdao.save(purchaseorder);
 
-        purchaseorderdao.save(purchaseorder);
+        return APIResponseBuilder.postResponse(savedPurchaseorder,savedPurchaseorder.getId());
 
-        response.put("id", String.valueOf(purchaseorder.getId()));
-        response.put("url", "/purchaseorders/" + purchaseorder.getId());
-        response.put("errors", errors);
-
-        return response;
     }
 
-
     @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String, String> update(@RequestBody Purchaseorder purchaseorder) {
-
-        HashMap<String, String> response = new HashMap<>();
-        String errors = "";
+    @Transactional
+    public ResponseEntity<APISuccessResponse<Purchaseorder>> update(@RequestBody Purchaseorder purchaseorder) {
 
         Purchaseorder extPurchaseorder = purchaseorderdao.findByMyId(purchaseorder.getId());
 
-        if (extPurchaseorder != null && !(purchaseorder.getNumber().equals(extPurchaseorder.getNumber())))
-            errors = errors + "<br> Not existing";
+        if (extPurchaseorder == null)
+            throw new ResourceNotFoundException("Purchase order not exists with this number: " + purchaseorder.getNumber());
 
-        if (extPurchaseorder != null) {
-            try {
-                extPurchaseorder.getPurchaseorderitems().clear();
-                purchaseorder.getPurchaseorderitems().forEach(newPurchaseorderIM -> {
-                    newPurchaseorderIM.setPurchaseorder(extPurchaseorder);
-                    extPurchaseorder.getPurchaseorderitems().add(newPurchaseorderIM);
-                    newPurchaseorderIM.setPurchaseorder(extPurchaseorder);
-                });
-
-                BeanUtils.copyProperties(purchaseorder, extPurchaseorder, "id");
-
-                if (errors.isEmpty())purchaseorderdao.save(purchaseorder);
-                else errors = "Server Validation Errors : <br> " + errors;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (purchaseorder.getPurchaseorderitems() != null) {
+            extPurchaseorder.getPurchaseorderitems().clear();
+            purchaseorder.getPurchaseorderitems().forEach(p -> p.setPurchaseorder(extPurchaseorder));
+            extPurchaseorder.getPurchaseorderitems().addAll(purchaseorder.getPurchaseorderitems());
         }
 
-        response.put("id", String.valueOf(purchaseorder.getId()));
-        response.put("url", "/purchaseorders/" + purchaseorder.getId());
-        response.put("errors", errors);
+        Purchaseorder updatedPurchaseorder = this.purchaseorderdao.save(extPurchaseorder);
 
-        return response;
+        return APIResponseBuilder.putResponse(updatedPurchaseorder,updatedPurchaseorder.getId());
+
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String, String> delete(@PathVariable Integer id) {
+    public ResponseEntity<APISuccessResponse<Purchaseorder>> delete(@PathVariable Integer id) {
 
-        HashMap<String, String> response = new HashMap<>();
-        String errors = "";
+        Purchaseorder purchaseorder = purchaseorderdao.findByMyId(id);
 
-        Purchaseorder extProduct = purchaseorderdao.findByMyId(id);
+        if (purchaseorder == null)
+            throw new ResourceNotFoundException("Purchase order not exists with this id: " + id);
 
-        if (extProduct == null) errors = errors + "<br> Purchase Order Does Not Exist";
+        purchaseorderdao.delete(purchaseorder);
 
-        if (errors.isEmpty()) purchaseorderdao.delete(extProduct);
-        else errors = "Server Validation Errors : <br> " + errors;
+        return APIResponseBuilder.deleteResponse(id);
 
-        response.put("id", String.valueOf(id));
-        response.put("url", "/purchaseorders/" + id);
-        response.put("errors", errors);
-
-        return response;
     }
 
 }

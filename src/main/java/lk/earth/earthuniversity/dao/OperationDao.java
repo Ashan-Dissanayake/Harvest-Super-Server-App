@@ -15,4 +15,6 @@ public interface OperationDao extends JpaRepository<Operation,Integer> {
     @Query("SELECT e FROM Operation e WHERE e.module.id = :id")
     List<Operation> findAllByModule(@Param("id") Integer id);
 
+    Operation findByNameAndModuleIdAndOpetypeId(String name,Integer mid,Integer oid);
+
 }

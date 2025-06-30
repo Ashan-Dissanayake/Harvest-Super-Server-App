@@ -2,13 +2,20 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.OperationDao;
+import lk.earth.earthuniversity.exception.ResourceExistsException;
+import lk.earth.earthuniversity.exception.ResourceNotFoundException;
+import lk.earth.earthuniversity.model.entity.Employee;
 import lk.earth.earthuniversity.model.entity.Operation;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,15 +24,14 @@ import java.util.stream.Stream;
 @RequestMapping(value = "/operations")
 public class OperationController {
 
-    @Autowired
-    private OperationDao operationDao;
+    @Autowired private OperationDao operationDao;
 
     @GetMapping(produces = "application/json")
-    public List<Operation> get(@RequestParam HashMap<String, String> params) {
+    public ResponseEntity<APISuccessResponse<List<Operation>>> get(@RequestParam HashMap<String, String> params) {
 
         List<Operation> operations = this.operationDao.findAll();
 
-        if(params.isEmpty())  return operations;
+        if(params.isEmpty())  return APIResponseBuilder.getResponse(operations, operations.size());
 
         String moduleid= params.get("moduleid");
 
@@ -33,12 +39,15 @@ public class OperationController {
 
         if(moduleid!=null) pstream = pstream.filter(p -> p.getModule().getId()==Integer.parseInt(moduleid));
 
-        return pstream.collect(Collectors.toList());
+        operations = pstream.collect(Collectors.toList());
+
+        return APIResponseBuilder.getResponse(operations, operations.size());
+
 
     }
 
     @GetMapping(path ="/list/{id}", produces = "application/json")
-    public List<Operation> get(@PathVariable Integer id) {
+    public ResponseEntity<APISuccessResponse<List<Operation>>> get(@PathVariable Integer id) {
 
         List<Operation> operations = this.operationDao.findAllByModule(id);
 
@@ -50,69 +59,57 @@ public class OperationController {
                     return op; }
         ).collect(Collectors.toList());
 
-        return operations;
+        return APIResponseBuilder.getResponse(operations, operations.size());
 
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String,String> add(@RequestBody Operation operation){
+    public ResponseEntity<APISuccessResponse<Operation>> add(@RequestBody Operation operation){
 
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+        Operation op = this.operationDao.findByNameAndModuleIdAndOpetypeId(
+                operation.getName(),
+                operation.getModule().getId(),
+                operation.getOpetype().getId()
+        );
 
-        System.out.println(operation.getName());
+        if (op!=null)
+            throw new ResourceExistsException("Operation already exists");
 
-        if(errors=="")
-            operationDao.save(operation);
-        else errors = "Server Validation Errors : <br> "+errors;
+        Operation savedOperation = operationDao.save(operation);
 
-        responce.put("id",String.valueOf(operation.getId()));
-        responce.put("url","/operations/"+operation.getId());
-        responce.put("errors",errors);
+        return APIResponseBuilder.postResponse(savedOperation,savedOperation.getId());
 
-        return responce;
+
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String,String> update(@RequestBody Operation operation){
+    public ResponseEntity<APISuccessResponse<Operation>> update(@RequestBody Operation operation){
 
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+        Operation op = this.operationDao.findByNameAndModuleIdAndOpetypeId(
+                operation.getName(),
+                operation.getModule().getId(),
+                operation.getOpetype().getId()
+        );
 
-        if(errors=="") operationDao.save(operation);
-        else errors = "Server Validation Errors : <br> "+errors;
+        if (!Objects.equals(op.getId(), operation.getId()))
+            throw new ResourceExistsException("Operation already exists");
 
-        responce.put("id",String.valueOf(operation.getId()));
-        responce.put("url","/employees/"+operation.getId());
-        responce.put("errors",errors);
+        Operation updatedOperation = operationDao.save(operation);
 
-        return responce;
+        return APIResponseBuilder.putResponse(updatedOperation,updatedOperation.getId());
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<String,String> delete(@PathVariable Integer id){
+    public ResponseEntity<APISuccessResponse<Operation>> delete(@PathVariable Integer id){
 
-        System.out.println(id);
+        Operation op = operationDao.findByMyId(id);
 
-        HashMap<String,String> responce = new HashMap<>();
-        String errors="";
+        if(op==null)
+            throw new ResourceNotFoundException("Operation doesn't exists");
 
-        Operation prv = operationDao.findByMyId(id);
+        operationDao.delete(op);
 
-        if(prv==null)
-            errors = errors+"<br> Employee Does Not Existed";
-
-        if(errors=="") operationDao.delete(prv);
-        else errors = "Server Validation Errors : <br> "+errors;
-
-        responce.put("id",String.valueOf(id));
-        responce.put("url","/operations/"+id);
-        responce.put("errors",errors);
-
-        return responce;
+        return APIResponseBuilder.deleteResponse(id);
     }
 
 }

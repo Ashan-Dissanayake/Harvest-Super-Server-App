@@ -1,8 +1,12 @@
 package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.UsrtypeDao;
+import lk.earth.earthuniversity.model.entity.Usestatus;
 import lk.earth.earthuniversity.model.entity.Usetype;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +24,7 @@ public class UsrtypeController {
     private UsrtypeDao usrtypeDao;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public List<Usetype> get() {
+    public ResponseEntity<APISuccessResponse<List<Usetype>>> get() {
 
         List<Usetype> usrtypes = this.usrtypeDao.findAll();
 
@@ -31,7 +35,7 @@ public class UsrtypeController {
                     return d; }
         ).collect(Collectors.toList());
 
-        return usrtypes;
+        return APIResponseBuilder.getResponse(usrtypes, usrtypes.size());
 
     }
 

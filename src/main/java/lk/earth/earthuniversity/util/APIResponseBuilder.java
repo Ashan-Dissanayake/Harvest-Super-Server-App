@@ -1,10 +1,13 @@
 package lk.earth.earthuniversity.util;
 
+import lk.earth.earthuniversity.model.response.APIErrorResponse;
 import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.model.response.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public class APIResponseBuilder {
@@ -25,20 +28,36 @@ public class APIResponseBuilder {
         ), HttpStatus.CREATED);
     }
 
-    public static <T> ResponseEntity<APISuccessResponse<T>> putResponse(T data,Object id) {
+    public static <T> ResponseEntity<APISuccessResponse<T>> putResponse(T data, Object id) {
         return new ResponseEntity<>(new APISuccessResponse<>(
                 data,
                 Map.of("status", "updated"),
-                Map.of("self", buildCurrentRequestUrl())
+                Map.of("self", buildUrlWithPath("/"+id))
         ), HttpStatus.OK);
     }
 
-    public static <T> ResponseEntity<APISuccessResponse<T>> deleteResponse(Integer id) {
+    public static <T> ResponseEntity<APISuccessResponse<T>> deleteResponse(Object id) {
         return new ResponseEntity<>(new APISuccessResponse<>(
                 null,
                 Map.of("status", "deleted"),
-                Map.of("self", buildCurrentRequestUrl())
+                Map.of("self", buildUrlWithPath("/"+id))
         ), HttpStatus.NO_CONTENT);
+    }
+
+    public static ResponseEntity<APIErrorResponse> error(
+            ErrorCode errorCode,
+            String detail,
+            HttpServletRequest request
+    ) {
+        String instanceUri = buildInstanceUrl(request);
+        return new ResponseEntity<>(new APIErrorResponse(
+                "https://localhost" + errorCode.getTypeUri(),
+                errorCode.getTitle(),
+                errorCode.getStatus(),
+                errorCode,
+                detail,
+                instanceUri
+        ), errorCode.getStatus());
     }
 
     private static String buildCurrentRequestUrl() {
@@ -51,6 +70,12 @@ public class APIResponseBuilder {
         return ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path(pathSegment)
+                .toUriString();
+    }
+
+    private static String buildInstanceUrl(HttpServletRequest request) {
+        return ServletUriComponentsBuilder
+                .fromRequestUri(request)
                 .toUriString();
     }
 }

@@ -2,8 +2,12 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.UsestatusDao;
+import lk.earth.earthuniversity.model.entity.Brand;
 import lk.earth.earthuniversity.model.entity.Usestatus;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +25,7 @@ public class UsestatusController {
     private UsestatusDao usestatusdao;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public List<Usestatus> get() {
+    public ResponseEntity<APISuccessResponse<List<Usestatus>>> get() {
 
         List<Usestatus> usestatuses = this.usestatusdao.findAll();
 
@@ -32,7 +36,7 @@ public class UsestatusController {
                     return d; }
         ).collect(Collectors.toList());
 
-        return usestatuses;
+        return APIResponseBuilder.getResponse(usestatuses, usestatuses.size());
 
     }
 

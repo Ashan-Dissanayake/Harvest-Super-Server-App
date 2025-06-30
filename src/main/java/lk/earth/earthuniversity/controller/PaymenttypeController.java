@@ -2,7 +2,10 @@ package lk.earth.earthuniversity.controller;
 
 import lk.earth.earthuniversity.dao.PaymenttypeDao;
 import lk.earth.earthuniversity.model.entity.Paymenttype;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +23,7 @@ public class PaymenttypeController {
     private PaymenttypeDao paymenttypedao;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public List<Paymenttype> get() {
+    public ResponseEntity<APISuccessResponse<List<Paymenttype>>> get() {
 
         List<Paymenttype> paymenttypes = this.paymenttypedao.findAll();
 
@@ -31,7 +34,7 @@ public class PaymenttypeController {
                     return i; }
         ).collect(Collectors.toList());
 
-        return paymenttypes;
+        return APIResponseBuilder.getResponse(paymenttypes, paymenttypes.size());
 
     }
 

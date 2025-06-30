@@ -2,8 +2,12 @@ package lk.earth.earthuniversity.controller;
 
 
 import lk.earth.earthuniversity.dao.ModuleDao;
+import lk.earth.earthuniversity.model.entity.Gender;
 import lk.earth.earthuniversity.model.entity.Module;
+import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +25,7 @@ public class ModuleController {
     private ModuleDao moduledao;
 
     @GetMapping(path ="/list",produces = "application/json")
-    public List<Module> get() {
+    public ResponseEntity<APISuccessResponse<List<Module>>> get() {
 
         List<Module> modules = this.moduledao.findAll();
 
@@ -32,7 +36,7 @@ public class ModuleController {
                             return m; }
         ).collect(Collectors.toList());
 
-        return modules;
+        return APIResponseBuilder.getResponse(modules, modules.size());
 
     }
 
