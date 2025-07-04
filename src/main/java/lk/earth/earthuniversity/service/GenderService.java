@@ -11,13 +11,14 @@ import java.util.stream.Collectors;
 @Service
 public class GenderService {
 
-    @Autowired private GenderDao genderdao;
+    @Autowired
+    private GenderDao genderdao;
 
-    public List<Gender> getGender(){
+    public List<Gender> getGender() {
 
         List<Gender> genderes = this.genderdao.findAll();
 
-       return genderes.stream().map(
+        return genderes.stream().map(
                 gender -> {
                     Gender d = new Gender();
                     d.setId(gender.getId());

@@ -19,12 +19,13 @@ import java.util.List;
 @RequestMapping(value = "/employeestatuses")
 public class EmpstatusController {
 
-    @Autowired private EmpstatusService empstatusService;
+    @Autowired
+    private EmpstatusService empstatusService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path = "/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<Empstatus>>> get() {
         List<Empstatus> empstatuses = empstatusService.getEmpStatus();
-       return APIResponseBuilder.getResponse(empstatuses, empstatuses.size());
+        return APIResponseBuilder.getResponse(empstatuses, empstatuses.size());
     }
 
 }

@@ -1,6 +1,5 @@
 package lk.earth.earthuniversity.controller;
 
-import lk.earth.earthuniversity.dao.DesignationDao;
 import lk.earth.earthuniversity.model.entity.Designation;
 import lk.earth.earthuniversity.model.response.APISuccessResponse;
 import lk.earth.earthuniversity.service.DesignationService;
@@ -21,11 +20,9 @@ import java.util.List;
 public class DesignationController {
 
     @Autowired
-    private DesignationDao designationdao;
+    private DesignationService designationService;
 
-    @Autowired private DesignationService designationService;
-
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path = "/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<Designation>>> get() {
         List<Designation> designationes = designationService.getDesignation();
         return APIResponseBuilder.getResponse(designationes, designationes.size());

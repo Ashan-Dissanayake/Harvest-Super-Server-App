@@ -11,13 +11,14 @@ import java.util.stream.Collectors;
 @Service
 public class EmptypeService {
 
-    @Autowired private EmptypeDao emptypedao;
+    @Autowired
+    private EmptypeDao emptypedao;
 
-    public List<Emptype> getEmptype(){
+    public List<Emptype> getEmptype() {
 
         List<Emptype> emptypees = this.emptypedao.findAll();
 
-       return emptypees.stream().map(
+        return emptypees.stream().map(
                 emptype -> {
                     Emptype d = new Emptype();
                     d.setId(emptype.getId());

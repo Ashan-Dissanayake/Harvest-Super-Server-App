@@ -16,29 +16,31 @@ import java.util.stream.Stream;
 @Service
 public class EmployeeService {
 
-    @Autowired private EmployeeDao employeeDao;
+    @Autowired
+    private EmployeeDao employeeDao;
 
     public List<Employee> getEmployees(HashMap<String, String> params) {
 
         List<Employee> employees = employeeDao.findAll();
 
-        if(params.isEmpty()) return  employees;
+        if (params.isEmpty()) return employees;
 
         String number = params.get("number");
-        String genderid= params.get("genderid");
-        String fullname= params.get("fullname");
-        String designationid= params.get("designationid");
-        String nic= params.get("nic");
+        String genderid = params.get("genderid");
+        String fullname = params.get("fullname");
+        String designationid = params.get("designationid");
+        String nic = params.get("nic");
 
         Stream<Employee> estream = employees.stream();
 
-        if(designationid!=null) estream = estream.filter(e -> e.getDesignation().getId()==Integer.parseInt(designationid));
-        if(genderid!=null) estream = estream.filter(e -> e.getGender().getId()==Integer.parseInt(genderid));
-        if(number!=null) estream = estream.filter(e -> e.getNumber().equals(number));
-        if(nic!=null) estream = estream.filter(e -> e.getNic().contains(nic));
-        if(fullname!=null) estream = estream.filter(e -> e.getFullname().contains(fullname));
+        if (designationid != null)
+            estream = estream.filter(e -> e.getDesignation().getId() == Integer.parseInt(designationid));
+        if (genderid != null) estream = estream.filter(e -> e.getGender().getId() == Integer.parseInt(genderid));
+        if (number != null) estream = estream.filter(e -> e.getNumber().equals(number));
+        if (nic != null) estream = estream.filter(e -> e.getNic().contains(nic));
+        if (fullname != null) estream = estream.filter(e -> e.getFullname().contains(fullname));
 
-       return estream.collect(Collectors.toList());
+        return estream.collect(Collectors.toList());
 
     }
 

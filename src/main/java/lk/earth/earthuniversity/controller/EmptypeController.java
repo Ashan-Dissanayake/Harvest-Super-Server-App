@@ -18,9 +18,10 @@ import java.util.List;
 @RequestMapping(value = "/empolyeetypes")
 public class EmptypeController {
 
-    @Autowired private EmptypeService emptypeService;
+    @Autowired
+    private EmptypeService emptypeService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path = "/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<Emptype>>> get() {
         List<Emptype> emptypees = emptypeService.getEmptype();
         return APIResponseBuilder.getResponse(emptypees, emptypees.size());

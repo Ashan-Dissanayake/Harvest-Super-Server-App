@@ -11,13 +11,14 @@ import java.util.stream.Collectors;
 @Service
 public class EmpstatusService {
 
-    @Autowired private EmpstatusDao empstatusdao;
+    @Autowired
+    private EmpstatusDao empstatusdao;
 
-    public List<Empstatus> getEmpStatus(){
+    public List<Empstatus> getEmpStatus() {
 
         List<Empstatus> empstatuses = this.empstatusdao.findAll();
 
-       return empstatuses.stream().map(
+        return empstatuses.stream().map(
                 empstatus -> {
                     Empstatus d = new Empstatus();
                     d.setId(empstatus.getId());

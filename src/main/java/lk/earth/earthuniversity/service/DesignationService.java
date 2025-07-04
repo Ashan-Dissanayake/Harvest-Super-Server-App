@@ -11,13 +11,14 @@ import java.util.stream.Collectors;
 @Service
 public class DesignationService {
 
-    @Autowired private DesignationDao designationdao;
+    @Autowired
+    private DesignationDao designationdao;
 
-    public List<Designation> getDesignation(){
+    public List<Designation> getDesignation() {
 
         List<Designation> designationes = this.designationdao.findAll();
 
-       return designationes.stream().map(
+        return designationes.stream().map(
                 designation -> {
                     Designation d = new Designation();
                     d.setId(designation.getId());

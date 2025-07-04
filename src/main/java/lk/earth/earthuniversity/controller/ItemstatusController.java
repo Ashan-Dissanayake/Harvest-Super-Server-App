@@ -1,8 +1,8 @@
 package lk.earth.earthuniversity.controller;
 
-import lk.earth.earthuniversity.dao.ItemstatusDao;
 import lk.earth.earthuniversity.model.entity.Itemstatus;
 import lk.earth.earthuniversity.model.response.APISuccessResponse;
+import lk.earth.earthuniversity.service.ItemstatusService;
 import lk.earth.earthuniversity.util.APIResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -20,22 +19,12 @@ import java.util.stream.Collectors;
 public class ItemstatusController {
 
     @Autowired
-    private ItemstatusDao itemstatusdao;
+    private ItemstatusService itemstatusService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path = "/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<Itemstatus>>> get() {
-
-        List<Itemstatus> itemstatuses = this.itemstatusdao.findAll();
-
-        itemstatuses = itemstatuses.stream().map(
-                itemstatus -> { Itemstatus i = new Itemstatus();
-                    i.setId(itemstatus.getId());
-                    i.setName(itemstatus.getName());
-                    return i; }
-        ).collect(Collectors.toList());
-
+        List<Itemstatus> itemstatuses = itemstatusService.getItemstatuses();
         return APIResponseBuilder.getResponse(itemstatuses, itemstatuses.size());
-
     }
 
 }

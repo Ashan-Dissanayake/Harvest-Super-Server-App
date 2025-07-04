@@ -16,7 +16,8 @@ import java.util.List;
 @RequestMapping(value = "/employees")
 public class EmployeeController {
 
-    @Autowired private EmployeeService employeeService;
+    @Autowired
+    private EmployeeService employeeService;
 
     @GetMapping(produces = "application/json")
 //  @PreAuthorize("hasAuthority('employee-select')")
@@ -25,7 +26,7 @@ public class EmployeeController {
         return APIResponseBuilder.getResponse(employees, employees.size());
     }
 
-    @GetMapping(path ="/list",produces = "application/json")
+    @GetMapping(path = "/list", produces = "application/json")
 //  @PreAuthorize("hasAuthority('employee-select-list')")
     public ResponseEntity<APISuccessResponse<List<Employee>>> get() {
         List<Employee> employees = this.employeeService.getEmployeesLsit();
@@ -34,21 +35,21 @@ public class EmployeeController {
 
     @PostMapping
 //  @PreAuthorize("hasAuthority('Employee-Insert')")
-    public ResponseEntity<APISuccessResponse<Employee>> add(@RequestBody Employee employee){
+    public ResponseEntity<APISuccessResponse<Employee>> add(@RequestBody Employee employee) {
         Employee savedEmployee = employeeService.createEmployee(employee);
         return APIResponseBuilder.postResponse(savedEmployee, savedEmployee.getId());
     }
 
     @PutMapping
 //  @PreAuthorize("hasAuthority('Employee-Update')")
-    public ResponseEntity<APISuccessResponse<Employee>> update(@RequestBody Employee employee){
+    public ResponseEntity<APISuccessResponse<Employee>> update(@RequestBody Employee employee) {
         Employee updatedEmployee = employeeService.updateEmployee(employee);
         return APIResponseBuilder.putResponse(updatedEmployee, updatedEmployee.getId());
     }
 
     @DeleteMapping("/{id}")
-    //  @PreAuthorize("hasAuthority('Employee-Update')")
-    public ResponseEntity<APISuccessResponse<Employee>> delete(@PathVariable Integer id){
+    //  @PreAuthorize("hasAuthority('Employee-Delete')")
+    public ResponseEntity<APISuccessResponse<Employee>> delete(@PathVariable Integer id) {
         employeeService.deleteEmployee(id);
         return APIResponseBuilder.deleteResponse(id);
     }
